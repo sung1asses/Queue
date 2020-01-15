@@ -19,12 +19,10 @@ class UpdateQueueStatus implements ShouldQueue
      */
     public $id;
     public $status=0;
-    public $operators;
-    public function __construct($id, $status, $operators)
+    public function __construct($id, $status)
     {
         $this->id = $id;
         $this->status = $status;
-        $this->operators = $operators;
     }
 
     /**
@@ -37,20 +35,5 @@ class UpdateQueueStatus implements ShouldQueue
         \App\QueueList::find($this->id)->update([
             'status' => $this->status,
         ]);
-        if($this->status == 1){
-            
-            foreach ($this->operators as $key => $value) {
-                \App\User::find($key)->update([
-                    'queue_list_id' => $this->id,
-                ]);
-            }
-        }
-        elseif($this->status == 2){
-            foreach ($this->operators as $key => $value) {
-                \App\User::find($key)->update([
-                    'queue_list_id' => null,
-                ]);
-            }
-        }
     }
 }

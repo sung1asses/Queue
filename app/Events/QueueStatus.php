@@ -22,10 +22,12 @@ class QueueStatus implements ShouldBroadcastNow
      */
     public $id;
     public $queues;
-    public function __construct($id, $queues)
+    public $operators;
+    public function __construct($id, $queues, $operators)
     {
         $this->id = $id; 
         $this->queues = $queues;
+        $this->operators = $operators;
     }
 
     /**
@@ -41,6 +43,7 @@ class QueueStatus implements ShouldBroadcastNow
     {
         return [
             'queues' => $this->queues,
+            'operators' => $this->operators,
         ];
     }
 }

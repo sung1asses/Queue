@@ -20,7 +20,9 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->tinyInteger('status')->default(0);
             $table->bigInteger('queue_id')->nullable();
+            $table->bigInteger('queue_list_id')->nullable();
             $table->timestamps();
         });
     }

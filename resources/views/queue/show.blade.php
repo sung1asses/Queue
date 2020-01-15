@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col">
-          <set-queue-component first_queues="{{ $queue }}" cookie_queue="{{ $cookie_queue }}" id="{{ $id }}"></set-queue-component>
+          <set-queue-component queues_json="{{ $queue }}" operators_json="{{ $operators }}" cookie_queue="{{ $cookie_queue }}" id="{{ $id }}"></set-queue-component>
         </div>
     </div>
 </div>

@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-<div class="section">
+<!-- <div class="section">
 	<div class="row">
 		<h2 class="col-12 text-center">Активные очереди</h2>
         @foreach($queue_list_active as $queue)
@@ -26,5 +26,5 @@
 		</div>
         @endforeach
 	</div>
-</div>
+</div> -->
 @endsection

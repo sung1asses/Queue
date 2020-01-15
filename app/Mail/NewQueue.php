@@ -17,12 +17,14 @@ class NewQueue extends Mailable
      * @return void
      */
     public $request;
-    public $queue_name;
+    public $queue_list;
+    public $encrypted_key;
 
-    public function __construct($request, $queue_name)
+    public function __construct($request, $queue_list)
     {
         $this->request = $request;
-        $this->queue_name = $queue_name;
+        $this->queue_list = $queue_list;
+        $this->encrypted_key = encrypt($request->key);
     }
 
     /**
@@ -34,6 +36,6 @@ class NewQueue extends Mailable
     {
         return $this->from('laravel@example.com')
                     ->subject('Вы встали в очередь!')
-                    ->markdown('emails.new_queue',[ 'request' => $this->request, 'queue_name' => $this->queue_name]);
+                    ->markdown('emails.new_queue',[ 'request' => $this->request, 'queue_list' => $this->queue_list, 'encrypted_key' => $this->encrypted_key]);
     }
 }

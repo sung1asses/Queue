@@ -1858,27 +1858,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['id'],
+  props: ['id', 'operator_status'],
   data: function data() {
-    return {};
+    return {
+      status: JSON.parse(this.operator_status)
+    };
   },
   mounted: function mounted() {},
   methods: {
-    nextQueueSucc: function nextQueueSucc() {
+    nextQueue: function nextQueue(stat) {
       axios.post('/admin/operator-level/queue/' + this.id, {
-        status: 'succ'
+        status: stat
       }).then(function (response) {
         console.log(response);
       })["catch"](function (error) {
         console.log(error);
       });
     },
-    nextQueueErr: function nextQueueErr() {
-      axios.post('/admin/operator-level/queue/' + this.id, {
-        status: 'err'
+    operatorStatus: function operatorStatus(stat) {
+      var _this = this;
+
+      axios.post('/admin/operator-level/queue/' + this.id + '/operatorStatus', {
+        status: stat
       }).then(function (response) {
         console.log(response);
+
+        if (stat == 1) {
+          _this.status = 1;
+        } else {
+          _this.status = 0;
+        }
       })["catch"](function (error) {
         console.log(error);
       });
@@ -1924,11 +1947,43 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['first_queues', 'id', 'queue_name_json'],
+  props: ['queues_json', 'operators_json', 'id', 'queue_name_json'],
   data: function data() {
     return {
-      queues: JSON.parse(this.first_queues),
+      operator_queues: JSON.parse(this.queues_json).splice(0, JSON.parse(this.operators_json).length),
+      queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
+      operators: JSON.parse(this.operators_json),
       queue_name: JSON.parse(this.queue_name_json)
     };
   },
@@ -1936,12 +1991,23 @@ __webpack_require__.r(__webpack_exports__);
     this.listen();
   },
   methods: {
+    getNameFromId: function getNameFromId(id) {
+      for (var i = 0; i < this.operator_queues.length; i++) {
+        if (this.operator_queues[i].id == id) {
+          return this.operator_queues[i].key;
+        }
+      }
+    },
     listen: function listen() {
       var _this = this;
 
       Echo.channel('queue.' + this.id).listen('QueueStatus', function (response) {
         console.log(response);
-        _this.queues = response.queues;
+        _this.operator_queues = response.queues.splice(0, response.operators.length); //удаляем обслуживающиеся очереди с обьекта!! В response.queues их уже нет!
+
+        _this.queues = response.queues; //По этому тут мы присваиваем оставшиеся
+
+        _this.operators = response.operators; //обновляем очередь
       });
     }
   }
@@ -2279,8 +2345,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['first_queues', 'cookie_queue', 'id'],
+  props: ['queues_json', 'operators_json', 'cookie_queue', 'id'],
   data: function data() {
     return {
       name: 'Roman',
@@ -2290,25 +2380,20 @@ __webpack_require__.r(__webpack_exports__);
       is_confirm: false,
       is_error: false,
       cookie: JSON.parse(this.cookie_queue),
-      queues: JSON.parse(this.first_queues)
+      queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
+      operators: JSON.parse(this.operators_json)
     };
   },
   mounted: function mounted() {
     this.listen();
   },
   methods: {
-    alertTrigger: function alertTrigger() {
-      $('#alert').modal("show");
-      this.deleteCookie();
-    },
     deleteQueue: function deleteQueue() {
       var _this = this;
 
-      axios["delete"]('/' + this.id, {
-        object: 'queue'
-      }).then(function (response) {
+      axios["delete"]('/' + this.id + '/queue', {}).then(function (response) {
         console.log(response);
-        _this.cookie = 0;
+        _this.cookie = 0; //удаляем куки
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2316,11 +2401,9 @@ __webpack_require__.r(__webpack_exports__);
     deleteCookie: function deleteCookie() {
       var _this2 = this;
 
-      axios["delete"]('/' + this.id, {
-        object: 'cookie'
-      }).then(function (response) {
-        console.log(response);
-        _this2.cookie = 0;
+      axios["delete"]('/' + this.id + '/cookie', {}).then(function (response) {
+        console.log(response.data);
+        _this2.cookie = 0; //удаляем куки
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2328,32 +2411,40 @@ __webpack_require__.r(__webpack_exports__);
     modalCallForm: function modalCallForm() {
       var _this3 = this;
 
-      this.is_loader = true;
+      this.is_loader = true; //показываем прелоадер
+
       axios.post('/' + this.id, {
         name: this.name,
         secondName: this.secondName,
         email: this.email
       }).then(function (response) {
         console.log(response.data);
-        _this3.cookie = response.data;
-        _this3.is_loader = false;
-        _this3.is_confirm = true;
+        _this3.cookie = response.data; //назначаем куки
+
+        _this3.is_loader = false; //убираем прелоадер
+
+        _this3.is_confirm = true; //показать сообщние об успехе
+
         setTimeout(function () {
           return _this3.is_confirm = false;
-        }, 2000);
+        }, 2000); //скрыть сообщние об успехе
+
         setTimeout(function () {
           return $('#modalCallForm').modal('hide');
-        }, 2000);
+        }, 2000); //скрыть модальное окно
       })["catch"](function (error) {
         console.log(error);
-        _this3.is_loader = false;
-        _this3.is_error = true;
+        _this3.is_loader = false; //показать лоадер
+
+        _this3.is_error = true; //показать сообщние об провале
+
         setTimeout(function () {
           return _this3.is_error = false;
-        }, 3000);
+        }, 3000); //скрыть сообщние об провале
+
         setTimeout(function () {
           return $('#modalCallForm').modal('hide');
-        }, 3000);
+        }, 3000); //скрыть модальное окно
       });
     },
     listen: function listen() {
@@ -2361,13 +2452,22 @@ __webpack_require__.r(__webpack_exports__);
 
       Echo.channel('queue.' + this.id).listen('QueueStatus', function (response) {
         console.log(response);
-        console.log(response.queues[0].id);
 
-        if (response.queues[0].id == _this4.cookie.id) {
-          _this4.alertTrigger();
+        if (_this4.queues.length > response.queues.length) {
+          if (response.queues.length != 0 && response.queues[0].id == _this4.cookie.id) {
+            //если id обновленной очереди и куки совпадают
+            $('#alert').modal("show"); //показываем уведомление о наступлении очереди
+          }
+
+          if (response.queues.length == 0 || _this4.queues[0].id == _this4.cookie.id) {
+            //если id старой очереди и куки совпадают
+            _this4.deleteCookie();
+          }
         }
 
-        _this4.queues = response.queues; // this.seesion_queue = response.seesion_queue;
+        _this4.queues = response.queues.splice(response.operators.length); //обновляем очередь
+
+        _this4.operators = response.operators; //обновляем очередь
       });
     }
   }
@@ -81682,31 +81782,73 @@ var render = function() {
   return _c("div", { staticClass: "card my-4" }, [
     _c("div", { staticClass: "card-header" }, [_vm._v("Управление")]),
     _vm._v(" "),
-    _c("div", { staticClass: "card-body" }, [
-      _c("div", { staticClass: "mb-3" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-primary w-100 p-3",
-            attrs: { type: "button" },
-            on: { click: _vm.nextQueueSucc }
-          },
-          [_vm._v("\n            Следующий\n          ")]
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-danger w-100 p-3",
-            attrs: { type: "button" },
-            on: { click: _vm.nextQueueErr }
-          },
-          [_vm._v("\n            Пропустить\n          ")]
-        )
-      ])
-    ])
+    _vm.status == 1
+      ? _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "mb-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary w-100 p-3",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    return _vm.nextQueue("succ")
+                  }
+                }
+              },
+              [_vm._v("\n            Следующий\n          ")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "mb-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger w-100 p-3",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    return _vm.nextQueue("err")
+                  }
+                }
+              },
+              [_vm._v("\n            Пропустить\n          ")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-warning w-100 p-3",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    return _vm.operatorStatus(0)
+                  }
+                }
+              },
+              [_vm._v("\n            Завершить работу\n          ")]
+            )
+          ])
+        ])
+      : _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "mb-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-success w-100 p-3",
+                attrs: { type: "button" },
+                on: {
+                  click: function($event) {
+                    return _vm.operatorStatus(1)
+                  }
+                }
+              },
+              [_vm._v("\n            Начать работу\n          ")]
+            )
+          ])
+        ])
   ])
 }
 var staticRenderFns = []
@@ -81731,28 +81873,68 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card my-4" }, [
-    _c("div", { staticClass: "card-header text-center" }, [
-      _vm._v("Очередь: " + _vm._s(_vm.queue_name.name))
+  return _c("div", { staticClass: "row justify-content-center" }, [
+    _c("div", { staticClass: "col-md-6" }, [
+      _c("div", { staticClass: "card my-4" }, [
+        _c("div", { staticClass: "card-header text-center" }, [
+          _vm._v("Очередь: " + _vm._s(_vm.queue_name.name))
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body p-0" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col" }, [
+              _c("table", { staticClass: "table table-striped mb-0" }, [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.queues, function(queue) {
+                    return _c("tr", [_c("td", [_vm._v(_vm._s(queue.key))])])
+                  }),
+                  0
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "card-body p-0" }, [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col" }, [
-          _c("table", { staticClass: "table table-striped mb-0" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.queues, function(queue) {
-                return _c("tr", [
-                  _c("td", [_vm._v(_vm._s(queue.name))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(queue.secondName))])
-                ])
-              }),
-              0
-            )
+    _c("div", { staticClass: "col-md-6" }, [
+      _c("div", { staticClass: "card my-4" }, [
+        _c("div", { staticClass: "card-header text-center" }, [
+          _vm._v("Операторы")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body p-0" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col" }, [
+              _c("table", { staticClass: "table table-striped mb-0" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.operators, function(operator) {
+                    return _c("tr", [
+                      operator.queue_id != null
+                        ? _c("td", [_vm._v(_vm._s(operator.name))])
+                        : _c("td", { staticClass: "bg-success" }, [
+                            _vm._v(_vm._s(operator.name))
+                          ]),
+                      _vm._v(" "),
+                      operator.queue_id != null
+                        ? _c("td", [
+                            _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
+                          ])
+                        : _c("td", { staticClass: "bg-success" }, [
+                            _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
+                          ])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            ])
           ])
         ])
       ])
@@ -81765,10 +81947,20 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Имя")]),
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Оператор")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Фамилия")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")])
       ])
     ])
   }
@@ -82008,7 +82200,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
+  return _c("div", { staticClass: "row justify-content-center" }, [
     _c("div", { staticClass: "col-md-4" }, [
       _c("div", { staticClass: "card my-4" }, [
         _c("div", { staticClass: "card-header" }, [_vm._v("Управление")]),
@@ -82038,7 +82230,7 @@ var render = function() {
                     _c(
                       "button",
                       {
-                        staticClass: "btn btn-warning w-100 p-3",
+                        staticClass: "btn btn-danger w-100 p-3",
                         attrs: { type: "button" },
                         on: { click: _vm.deleteQueue }
                       },
@@ -82051,9 +82243,11 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "col-md-8" }, [
+    _c("div", { staticClass: "col-md-4" }, [
       _c("div", { staticClass: "card my-4" }, [
-        _c("div", { staticClass: "card-header" }, [_vm._v("Очередь")]),
+        _c("div", { staticClass: "card-header text-center" }, [
+          _vm._v("Очередь")
+        ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-body p-0" }, [
           _c("div", { staticClass: "row" }, [
@@ -82066,16 +82260,10 @@ var render = function() {
                   _vm._l(_vm.queues, function(queue) {
                     return _c("tr", [
                       _vm.cookie && _vm.cookie.id == queue.id
-                        ? _c("td", { staticClass: "text-success bold" }, [
-                            _vm._v(_vm._s(queue.name))
+                        ? _c("td", { staticClass: "bg-warning bold" }, [
+                            _vm._v(_vm._s(queue.key))
                           ])
-                        : _c("td", [_vm._v(_vm._s(queue.name))]),
-                      _vm._v(" "),
-                      _vm.cookie && _vm.cookie.id == queue.id
-                        ? _c("td", { staticClass: "text-success bold" }, [
-                            _vm._v(_vm._s(queue.secondName))
-                          ])
-                        : _c("td", [_vm._v(_vm._s(queue.secondName))])
+                        : _c("td", [_vm._v(_vm._s(queue.key))])
                     ])
                   }),
                   0
@@ -82087,7 +82275,45 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _vm._m(1),
+    _c("div", { staticClass: "col-md-4" }, [
+      _c("div", { staticClass: "card my-4" }, [
+        _c("div", { staticClass: "card-header text-center" }, [
+          _vm._v("Операторы")
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body p-0" }, [
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col" }, [
+              _c("table", { staticClass: "table table-striped mb-0" }, [
+                _vm._m(1),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.operators, function(operator) {
+                    return _c("tr", [
+                      _vm.cookie && _vm.cookie.id == operator.queue_id
+                        ? _c("td", { staticClass: "bg-warning bold" }, [
+                            _vm._v(_vm._s(operator.name))
+                          ])
+                        : _c("td", [_vm._v(_vm._s(operator.name))]),
+                      _vm._v(" "),
+                      _vm.cookie && _vm.cookie.id == operator.queue_id
+                        ? _c("td", { staticClass: "bg-warning bold" }, [
+                            _vm._v(_vm._s(operator.queue_id))
+                          ])
+                        : _c("td", [_vm._v(_vm._s(operator.queue_id))])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            ])
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _vm._m(2),
     _vm._v(" "),
     _c(
       "div",
@@ -82113,7 +82339,7 @@ var render = function() {
                 attrs: { id: "needs-validation1" }
               },
               [
-                _vm._m(2),
+                _vm._m(3),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body mx-3" }, [
                   _c("div", { staticClass: "form" }, [
@@ -82306,10 +82532,20 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("thead", [
-      _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Имя")]),
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", { staticClass: "text-center" }, [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Оператор")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Фамилия")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")])
       ])
     ])
   },

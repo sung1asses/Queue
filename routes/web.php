@@ -31,10 +31,10 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
       Route::put('/queue/{id}', 'AdminController@setOperator')->name('admin.queue.set-operator');
 
       // Operators
-      Route::get('/operator', 'AdminController@listOperator2')->name('admin.operator.list');
-      Route::post('/operator', 'AdminController@createOperator2')->name('admin.operator.create');
-      Route::get('/operator/{id}/delete', 'AdminController@deleteOperator2')->name('admin.operator.delete');
-      Route::get('/operator/{id}', 'AdminController@showOperator2')->name('admin.operator.show');
+      Route::get('/operator', 'AdminController@listOperator')->name('admin.operator.list');
+      Route::post('/operator', 'AdminController@createOperator')->name('admin.operator.create');
+      Route::get('/operator/{id}/delete', 'AdminController@deleteOperator')->name('admin.operator.delete');
+      Route::get('/operator/{id}', 'AdminController@showOperator')->name('admin.operator.show');
 
       // statistic
       Route::post('/stat', 'AdminStatController@historyStat');
@@ -45,6 +45,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
       Route::get('/queue', 'OperatorController@listQueue')->name('operator.queue.list');
       Route::get('/queue/{id}', 'OperatorController@showQueue')->name('operator.queue.show');
       Route::post('/queue/{id}', 'OperatorController@nextButton')->name('operator.queue.next-button');
+      Route::post('/queue/{id}/operatorStatus', 'OperatorController@operatorStatus')->name('operator.queue.operator-status');
 
     });
 });
@@ -52,4 +53,5 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 Route::get('/', 'GuestController@listQueue')->name('queue.list');
 Route::get('/{id}', 'GuestController@showQueue')->name('queue.show');
 Route::post('/{id}', 'GuestController@standIn')->name('queue.standIn');
-Route::delete('/{id}', 'GuestController@standOut')->name('queue.standOut');
+Route::delete('/{id}/{object}', 'GuestController@standOut')->name('queue.standOut');
+Route::get('/{id}/resetCookie/{key}', 'GuestController@resetCookie')->name('queue.resetCookie');

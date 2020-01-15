@@ -19,7 +19,7 @@ class User extends Authenticatable implements HasRoleContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','queue_list_id','queue_id'
+        'name', 'email', 'password','queue_list_id','queue_id','status'
     ];
 
     /**

@@ -1,5 +1,5 @@
 <template>
-<div class="row">
+<div class="row justify-content-center">
   <div class="col-md-4">
     <div class="card my-4">
         <div class="card-header">Управление</div>
@@ -12,34 +12,58 @@
             
             <div v-else>
               <h3>Ваш ключ: <b>{{ cookie.key }}</b></h3>
-              <h3><button @click="deleteQueue" type="button" class="btn btn-warning w-100 p-3">Выйти с очереди</button></h3>
+              <h3><button @click="deleteQueue" type="button" class="btn btn-danger w-100 p-3">Выйти с очереди</button></h3>
             </div>
 
           </div>
         </div>
     </div>
   </div>
-  <div class="col-md-8">
+  <div class="col-md-4">
     <div class="card my-4">
-      <div class="card-header">Очередь</div>
+      <div class="card-header text-center">Очередь</div>
       <div class="card-body p-0">
         <div class="row">
           <div class="col">
             
             <table class="table table-striped mb-0">
               <thead>
-                <tr>
-                  <th scope="col">Имя</th>
-                  <th scope="col">Фамилия</th>
+                <tr class="text-center">
+                  <th scope="col">Ключ</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="queue in queues">
-                    <td v-if="cookie && cookie.id==queue.id" class="text-success bold">{{ queue.name }}</td>
-                    <td v-else>{{ queue.name }}</td>
-
-                    <td v-if="cookie && cookie.id==queue.id" class="text-success bold">{{ queue.secondName }}</td>
-                    <td v-else>{{ queue.secondName }}</td>
+                    <td v-if="cookie && cookie.id==queue.id" class="bg-warning bold">{{ queue.key }}</td>
+                    <td v-else>{{ queue.key }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card my-4">
+      <div class="card-header text-center">Операторы</div>
+      <div class="card-body p-0">
+        <div class="row">
+          <div class="col">
+            
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr class="text-center">
+                  <th scope="col">Оператор</th>
+                  <th scope="col">Ключ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="operator in operators">
+                    <td v-if="cookie && cookie.id==operator.queue_id" class="bg-warning bold">{{ operator.name }}</td>
+                    <td v-else>{{ operator.name }}</td>
+                    <td v-if="cookie && cookie.id==operator.queue_id" class="bg-warning bold">{{ operator.queue_id }}</td>
+                    <td v-else>{{ operator.queue_id }}</td>
                 </tr>
               </tbody>
             </table>
@@ -119,7 +143,7 @@
 
 <script>
     export default {
-        props:['first_queues','cookie_queue','id'],
+        props:['queues_json','operators_json','cookie_queue','id'],
         data:function(){
             return{
                 name: 'Roman',
@@ -130,45 +154,41 @@
                 is_confirm: false,
                 is_error: false,
                 
+
                 cookie: JSON.parse(this.cookie_queue),
 
-                queues: JSON.parse(this.first_queues),
+                queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
+                operators: JSON.parse(this.operators_json),
             }
         },
         mounted() {
           this.listen();
         },
         methods: {
-            alertTrigger() {
-              $('#alert').modal("show");
-              this.deleteCookie();
-            },
             deleteQueue() {
-              axios.delete('/'+this.id, {
-                object: 'queue',
+              axios.delete('/'+this.id+'/queue', {
               })
               .then((response) => {
                 console.log(response);
-                this.cookie = 0;
+                this.cookie = 0;//удаляем куки
               })
               .catch((error) => {
                 console.log(error);
               })
             },
             deleteCookie(){
-              axios.delete('/'+this.id, {
-                object: 'cookie',
+              axios.delete('/'+this.id+'/cookie', {
               })
               .then((response) => {
-                console.log(response);
-                this.cookie = 0;
+                console.log(response.data);
+                this.cookie = 0;//удаляем куки
               })
               .catch((error) => {
                 console.log(error);
               })
             },
             modalCallForm() {
-                this.is_loader = true;
+                this.is_loader = true;//показываем прелоадер
                 axios.post('/'+this.id, {
                   name: this.name,
                   secondName: this.secondName,
@@ -176,30 +196,35 @@
                 })
                 .then((response) => {
                   console.log(response.data);
-                  this.cookie = response.data;
-                  this.is_loader=false;
-                  this.is_confirm=true;
-                  setTimeout(() => this.is_confirm = false, 2000);
-                  setTimeout(() => $('#modalCallForm').modal('hide'), 2000);
+                  this.cookie = response.data;//назначаем куки
+                  this.is_loader=false;//убираем прелоадер
+                  this.is_confirm=true;//показать сообщние об успехе
+                  setTimeout(() => this.is_confirm = false, 2000);//скрыть сообщние об успехе
+                  setTimeout(() => $('#modalCallForm').modal('hide'), 2000);//скрыть модальное окно
                 })
                 .catch((error) => {
                   console.log(error);
-                  this.is_loader=false;
-                  this.is_error=true;
-                  setTimeout(() => this.is_error = false, 3000);
-                  setTimeout(() => $('#modalCallForm').modal('hide'), 3000);
+                  this.is_loader=false;//показать лоадер
+                  this.is_error=true;//показать сообщние об провале
+                  setTimeout(() => this.is_error = false, 3000);//скрыть сообщние об провале
+                  setTimeout(() => $('#modalCallForm').modal('hide'), 3000);//скрыть модальное окно
                 })
             },
             listen() {
               Echo.channel('queue.'+this.id)
                 .listen('QueueStatus', (response) => {
                   console.log(response)
-                  console.log(response.queues[0].id)
-                  if(response.queues[0].id == this.cookie.id){
-                    this.alertTrigger();
+                  if(this.queues.length>response.queues.length)
+                  {
+                    if(response.queues.length!=0 && response.queues[0].id == this.cookie.id){//если id обновленной очереди и куки совпадают
+                      $('#alert').modal("show");//показываем уведомление о наступлении очереди
+                    }
+                    if(response.queues.length==0 || this.queues[0].id==this.cookie.id){//если id старой очереди и куки совпадают
+                      this.deleteCookie();
+                    }
                   }
-                  this.queues = response.queues;
-                  // this.seesion_queue = response.seesion_queue;
+                  this.queues = response.queues.splice(response.operators.length);//обновляем очередь
+                  this.operators = response.operators;//обновляем очередь
                 })
             }
         }

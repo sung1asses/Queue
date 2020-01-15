@@ -8,7 +8,6 @@ use Illuminate\Contracts\Bus\Dispatcher;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 use App\QueueList;
 use App\Queue;
@@ -52,10 +51,10 @@ class AdminController extends Controller
         	'toDate' => $request['toDate'],
         ]);
 
-        $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 1, $request->operators))->delay(Carbon::createFromFormat('Y-m-d', $queue->fromDate,'Asia/Almaty'));
+        $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 1))->delay(Carbon::createFromFormat('Y-m-d', $queue->fromDate,'Asia/Almaty'));
         $jobId1 = app(Dispatcher::class)->dispatch($job);
         
-        $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 2, $request->operators))->delay(Carbon::createFromFormat('Y-m-d', $queue->toDate,'Asia/Almaty'));
+        $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 2))->delay(Carbon::createFromFormat('Y-m-d', $queue->toDate,'Asia/Almaty'));
         $jobId2 = app(Dispatcher::class)->dispatch($job);
 
         $queue->update([
@@ -80,11 +79,12 @@ class AdminController extends Controller
             return abort(404);
         }
 
-    	$queue = QueueList::find($id)->queues()->limit(10)->get();
+    	$queue = QueueList::find($id)->queues()->limit(30)->get();
         $operators = Role::where('group', 'operator')->first()->users()->get();
         $active_operators = QueueList::find($id)->users()->get();
         $queue_name = QueueList::select('name')->find($id);
-    	return view('admin.queue.show', compact('queue','id', 'operators', 'active_operators', 'queue_name'));
+        $queue_operators = Role::where('group', 'operator')->first()->users()->where([['queue_list_id', $id],['status', 1]])->get();//Выбираем всех операторов, обслуживаюищих очередь
+    	return view('admin.queue.show', compact('queue','id', 'operators', 'active_operators', 'queue_name','queue_operators'));
     }
 
     public function setOperator($id, Request $request)

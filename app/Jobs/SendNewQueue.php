@@ -13,12 +13,12 @@ class SendNewQueue implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $request;
-    public $queue_name;
+    public $queue_list;
 
-    public function __construct($request, $queue_name)
+    public function __construct($request, $queue_list)
     {
         $this->request = $request;
-        $this->queue_name = $queue_name;
+        $this->queue_list = $queue_list;
     }
 
     /**
@@ -28,7 +28,7 @@ class SendNewQueue implements ShouldQueue
      */
     public function handle()
     {
-        $email = new \App\Mail\NewQueue($this->request, $this->queue_name);
+        $email = new \App\Mail\NewQueue($this->request, $this->queue_list);
         \Mail::to($this->request->email)->send($email);
     }
 }

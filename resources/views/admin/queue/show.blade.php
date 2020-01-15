@@ -8,10 +8,10 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-6">
-      <big-window-component first_queues="{{ $queue }}" id="{{ $id }}" queue_name_json="{{ $queue_name }}"></big-window-component>
+    <div class="col-md-8">
+      <big-window-component queues_json="{{ $queue }}" operators_json="{{ $queue_operators }}" id="{{ $id }}" queue_name_json="{{ $queue_name }}"></big-window-component>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
       <set-operator-component id="{{ $id }}" operators_json="{{ $operators }}" active_operators_json="{{ $active_operators }}">
     </div>
 </div>

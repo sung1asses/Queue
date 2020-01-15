@@ -3,10 +3,10 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 
 class SendYouAreFired implements ShouldQueue
 {
@@ -14,8 +14,8 @@ class SendYouAreFired implements ShouldQueue
 
     public $request;
     public $queue_name;
-
-    public function __construct($request, $queue_name)
+    
+    public function __construct($request ,$queue_name)
     {
         $this->request = $request;
         $this->queue_name = $queue_name;
@@ -28,7 +28,7 @@ class SendYouAreFired implements ShouldQueue
      */
     public function handle()
     {
-        $email = new \App\Mail\YouAreFired($this->request, $this->queue_name);
+        $email = new \App\Mail\YouAreFired($this->queue_name);
         \Mail::to($this->request->email)->send($email);
     }
 }

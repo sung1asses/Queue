@@ -16,15 +16,12 @@ class YouAreFired extends Mailable
      *
      * @return void
      */
-    public $request;
     public $queue_name;
 
-    public function __construct($request, $queue_name)
+    public function __construct($queue_name)
     {
-        $this->request = $request;
         $this->queue_name = $queue_name;
     }
-
 
     /**
      * Build the message.
@@ -35,6 +32,6 @@ class YouAreFired extends Mailable
     {
         return $this->from('laravel@example.com')
                     ->subject('Увы, но вы пропустили свою очередь!')
-                    ->markdown('emails.fired',[ 'request' => $this->request, 'queue_name' => $this->queue_name ]);
+                    ->markdown('emails.fired',['queue_name' => $this->queue_name ]);
     }
 }
