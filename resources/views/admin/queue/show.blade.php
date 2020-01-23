@@ -12,7 +12,7 @@
       <big-window-component queues_json="{{ $queue }}" operators_json="{{ $queue_operators }}" id="{{ $id }}" queue_name_json="{{ $queue_name }}"></big-window-component>
     </div>
     <div class="col-md-4">
-      <set-operator-component id="{{ $id }}" operators_json="{{ $operators }}" active_operators_json="{{ $active_operators }}">
+      <set-operator-component id="{{ $id }}" operators_json="{{ $operators }}" active_operators_json="{{ $active_operators }}"></set-operator-component>
     </div>
 </div>
 @stop

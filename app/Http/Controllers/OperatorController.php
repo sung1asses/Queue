@@ -110,6 +110,13 @@ class OperatorController extends Controller
                     'queue_id' => $queue[count($all_operators)]->id, //Отнимаем от количества всех операторов количество всех незанятых, чтоб получить порядковое число необслуживаемой очереди.
                 ]);
             }
+            else{
+                User::find(Auth::id())->update([
+                    'queue_list_id' => $id,
+                    'status' => 1,
+                    'queue_id' => null, //В противном случае просто меняем статус
+                ]);
+            }
         }
         else{
             $operator_queue = QueueList::find($id)->queues()->find(Auth::user()->queue_id);

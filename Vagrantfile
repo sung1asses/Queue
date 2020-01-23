@@ -50,4 +50,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.hostmanager.manage_host = true
         config.hostmanager.aliases = settings['sites'].map { |site| site['map'] }
     end
+
+    config.vm.provision "shell" do |s|
+        s.inline = "php code/artisan migrate:fresh --seed -qn"
+    end
+
+    config.vm.provision "shell" do |s|
+        s.inline = "php code/artisan optimize:clear -qn"
+    end
+
+    config.vm.provision "shell" do |s|
+        s.inline = "php code/artisan queue:work -qn --daemon$"
+    end
+
+    config.vm.provision "shell" do |s|
+        s.inline = "php code/artisan websockets:serve -qn$"
+    end
 end

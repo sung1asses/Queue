@@ -34,8 +34,8 @@
               </thead>
               <tbody>
                 <tr v-for="queue in queues">
-                    <td v-if="cookie && cookie.id==queue.id" class="bg-warning bold">{{ queue.key }}</td>
-                    <td v-else>{{ queue.key }}</td>
+                  <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
+                  <td v-else>{{ queue.key }}</td>
                 </tr>
               </tbody>
             </table>
@@ -60,10 +60,10 @@
               </thead>
               <tbody>
                 <tr v-for="operator in operators">
-                    <td v-if="cookie && cookie.id==operator.queue_id" class="bg-warning bold">{{ operator.name }}</td>
-                    <td v-else>{{ operator.name }}</td>
-                    <td v-if="cookie && cookie.id==operator.queue_id" class="bg-warning bold">{{ operator.queue_id }}</td>
-                    <td v-else>{{ operator.queue_id }}</td>
+                    <td v-if="operator.queue_id!=null">{{ operator.name }}</td>
+                    <td v-else class="text-white" style="background-color: #28a745">{{ operator.name }}</td>
+                    <td v-if="operator.queue_id!=null">{{ getNameFromId(operator.queue_id) }}</td>
+                    <td v-else class="text-white" style="background-color: #28a745">{{ getNameFromId(operator.queue_id) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -72,7 +72,6 @@
       </div>
     </div>
   </div>
-
 
   <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
@@ -131,7 +130,7 @@
           </div>
           <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
           <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Вы уже зарегестрированны в очереди</h5>
-          <button @click="modalCallForm" class="btn btn-primary ml-auto">Отправить</button>
+          <button :disabled="is_loader" @click="modalCallForm" class="btn btn-primary ml-auto">Отправить</button>
         </div>
       </div>
     </div>
@@ -154,9 +153,10 @@
                 is_confirm: false,
                 is_error: false,
                 
-
                 cookie: JSON.parse(this.cookie_queue),
+                cookie_flag: false,
 
+                operator_queues: JSON.parse(this.queues_json).splice(0,JSON.parse(this.operators_json).length),
                 queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
                 operators: JSON.parse(this.operators_json),
             }
@@ -165,6 +165,13 @@
           this.listen();
         },
         methods: {
+            getNameFromId(id){
+              for(let i=0; i<this.operator_queues.length; i++){
+                if(this.operator_queues[i].id==id){
+                  return this.operator_queues[i].key;
+                }
+              }
+            },
             deleteQueue() {
               axios.delete('/'+this.id+'/queue', {
               })
@@ -214,17 +221,42 @@
               Echo.channel('queue.'+this.id)
                 .listen('QueueStatus', (response) => {
                   console.log(response)
-                  if(this.queues.length>response.queues.length)
-                  {
-                    if(response.queues.length!=0 && response.queues[0].id == this.cookie.id){//если id обновленной очереди и куки совпадают
-                      $('#alert').modal("show");//показываем уведомление о наступлении очереди
+                  if(this.cookie != 0){
+                    let flag = 0;
+                    for(let i=0; i<response.queues.length; i++){
+                      if(response.queues[i].id==this.cookie.id){
+                        flag = 1;
+                      }
                     }
-                    if(response.queues.length==0 || this.queues[0].id==this.cookie.id){//если id старой очереди и куки совпадают
-                      this.deleteCookie();
+                    if(flag == 0){
+                        this.cookie_flag = false;
+                        this.deleteCookie();
                     }
                   }
-                  this.queues = response.queues.splice(response.operators.length);//обновляем очередь
+
+                  this.operator_queues = response.queues.splice(0,response.operators.length);//удаляем обслуживающиеся очереди с обьекта!! В response.queues их уже нет!
+                  this.queues = response.queues//По этому тут мы присваиваем оставшиеся
                   this.operators = response.operators;//обновляем очередь
+
+                  if(this.cookie_flag == false){
+                    for(let i=0; i<this.operator_queues.length; i++){
+                      if(this.cookie != 0 && this.operator_queues[i].id == this.cookie.id){//Если обслуживаемые очереди совпадает с куки
+                        $('#alert').modal("show");//показываем уведомление о наступлении очереди
+                        this.cookie_flag = true;
+                      }
+                    }
+                  }
+                  else{
+                    let flag = 0
+                    for(let i=0; i<this.operator_queues.length; i++){
+                      if(this.cookie != 0 && this.operator_queues[i].id == this.cookie.id){//Если обслуживаемые очереди совпадает с куки
+                        flag = 1;
+                      }
+                    }
+                    if(flag == 0){
+                      this.cookie_flag = false;
+                    }
+                  }
                 })
             }
         }
