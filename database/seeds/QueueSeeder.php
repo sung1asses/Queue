@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
+use Illuminate\Support\Carbon;
 use App\QueueList;
 class QueueSeeder extends Seeder
 {
@@ -12,6 +13,12 @@ class QueueSeeder extends Seeder
      */
     public function run()
     {
+    	QueueList::create([
+        	'name' => 'Queue1',
+        	'fromDate' => Carbon::now(),
+        	'toDate' => Carbon::now(),
+        	'status' => 1,
+    	]);
         QueueList::find(1)->queues()->create([//Создание заявки
 			'name' => 'Name1',
 			'secondName' => 'SName1',
