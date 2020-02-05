@@ -48,5 +48,9 @@ class DatabaseSeeder extends Seeder
 	        'email' => 'saptova_tomiris@queue.operator',
 	        'password' => Illuminate\Support\Facades\Hash::make('operator'),
 	    ])->attachRole($operatorRole);
+	    
+        $this->call([
+	        QueueSeeder::class,
+	    ]);
     }
 }
