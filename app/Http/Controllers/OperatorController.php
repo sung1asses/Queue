@@ -19,7 +19,7 @@ class OperatorController extends Controller
 {
 	public function listQueue()
 	{
-		$queue_list = Auth::user()->queueLists()->get(); //Список всех очередей
+		$queue_list = Auth::user()->queueLists()->where('status',1)->get(); //Список всех очередей
 		return view('admin.operator-level.queue.index', compact('queue_list'));
 	}
 	public function showQueue($id)
