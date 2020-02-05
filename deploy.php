@@ -38,5 +38,5 @@ after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
 
-before('deploy:symlink', 'artisan:migrate', 'artisan:websockets-serve -qn', 'artisan queue:work -qn');
+before('deploy:symlink', 'artisan:migrate');
 
