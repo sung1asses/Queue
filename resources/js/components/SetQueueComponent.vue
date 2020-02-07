@@ -104,21 +104,21 @@
                  <label for="name" class="col-md-5 col-form-label text-md-right">Ваше имя</label>
                                      
                  <div class="col-md-7">
-                     <input type="text" min="0" class="form-control" v-model="name" name="name" required="">
+                     <input type="text" min="0" class="form-control" placeholder="Ivan" v-model="name" name="name" required="">
                  </div>
               </div>
               <div class="form-group row">
                  <label for="secondName" class="col-md-5 col-form-label text-md-right">Ваша фамилия</label>
                                      
                  <div class="col-md-7">
-                     <input type="text" min="0" class="form-control" v-model="secondName" name="secondName" required="">
+                     <input type="text" min="0" class="form-control" v-model="secondName" placeholder="Ivanov" name="secondName" required="">
                  </div>
               </div>
               <div class="form-group row">
                  <label for="email" class="col-md-5 col-form-label text-md-right">Ваша почта</label>
                                      
                  <div class="col-md-7">
-                     <input type="email" min="0" class="form-control" v-model="email" name="email" required="">
+                     <input type="email" min="0" class="form-control" v-model="email" placeholder="Ivan777@gmail.ru" name="email" required="">
                  </div>
               </div>
             </div>
@@ -145,9 +145,9 @@
         props:['queues_json','operators_json','cookie_queue','id'],
         data:function(){
             return{
-                name: 'Roman',
-                secondName: 'Suvorov',
-                email: 'suvorov_roman_01@mail.ru',
+                name: '',
+                secondName: '',
+                email: '',
 
                 is_loader: false,
                 is_confirm: false,

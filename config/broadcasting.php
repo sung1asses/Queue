@@ -37,10 +37,10 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'host' => '192.168.10.10',
+                'host' => env('WEBSOCKET_BROADCAST_HOST'),
                 'port' => 6001,
                 'scheme' => 'http',
-                'encrypted' => true,
+                'encrypted' => false,
             ],
         ],
 

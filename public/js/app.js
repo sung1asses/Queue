@@ -2451,9 +2451,9 @@ __webpack_require__.r(__webpack_exports__);
   props: ['queues_json', 'operators_json', 'cookie_queue', 'id'],
   data: function data() {
     return {
-      name: 'Roman',
-      secondName: 'Suvorov',
-      email: 'suvorov_roman_01@mail.ru',
+      name: '',
+      secondName: '',
+      email: '',
       is_loader: false,
       is_confirm: false,
       is_error: false,
@@ -82478,6 +82478,7 @@ var render = function() {
                           attrs: {
                             type: "text",
                             min: "0",
+                            placeholder: "Ivan",
                             name: "name",
                             required: ""
                           },
@@ -82518,6 +82519,7 @@ var render = function() {
                           attrs: {
                             type: "text",
                             min: "0",
+                            placeholder: "Ivanov",
                             name: "secondName",
                             required: ""
                           },
@@ -82558,6 +82560,7 @@ var render = function() {
                           attrs: {
                             type: "email",
                             min: "0",
+                            placeholder: "Ivan777@gmail.ru",
                             name: "email",
                             required: ""
                           },
@@ -95452,8 +95455,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/roman/html/LARAVEL/Queue2/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/roman/html/LARAVEL/Queue2/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/roman/HTML/Queue/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/roman/HTML/Queue/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
