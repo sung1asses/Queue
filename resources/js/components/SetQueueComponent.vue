@@ -1,5 +1,104 @@
 <template>
-<div class="row justify-content-center">
+
+<div class="inline">
+    <button  v-if="cookie==0" type="button" class="btn butt btn-primary" data-toggle="modal" data-target="#modalCallForm">Встать в очередь</button>
+    <div v-else>
+      <h3>Вы <b>{{ getIndexFromId }}</b> в списке</h3>
+      <h3>Ваш ключ: <b>{{ cookie.key }}</b></h3>
+      <button @click="deleteQueue" type="button" class="btn butt btn-primary">Выйти с очереди</button>
+    </div>
+
+    <table class="kezek">
+        <tr>
+            <th colspan="3" class="kezek_btn">Список очередей</th>
+        </tr>
+        <tr>
+            <th>Очередь</th>
+            <th><i class="fas fa-angle-right"></i></th>
+            <th>Талон</th>
+        </tr>
+        <tr v-for="(queue, key) in queues">
+          <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
+          <td v-else>{{ key+1 }}</td>
+            <th><i class="fas fa-angle-right"></i></th>
+          <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
+          <td v-else>{{ queue.key }}</td>
+        </tr>
+
+    </table>
+    <table class="kezek">
+        <tr>
+            <th colspan="3" class="kezek_btn">Список опеаторов</th>
+        </tr>
+        <tr>
+            <th>Операторы</th>
+            <th><i class="fas fa-angle-right"></i></th>
+            <th>Талон</th>
+        </tr>
+        <tr v-for="operator in operators">
+            <td v-if="operator.queue_id!=null">{{ operator.name }}</td>
+            <td v-else style="background-color: #28a745">{{ operator.name }}</td>
+              <th><i class="fas fa-angle-right"></i></th>
+            <td v-if="operator.queue_id!=null">{{ getNameFromId(operator.queue_id) }}</td>
+            <td v-else style="background-color: #28a745">{{ getNameFromId(operator.queue_id) }}</td>
+        </tr>
+    </table>
+        <!-- Modal -->
+    <div class="modal fade" id="modalCallForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Встать в очередь</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="modal_input">
+                            <label for="MsecName">Фамилия: </label><input id="MsecName" type="text" placeholder="Введите Фамилию" v-model="secondName" name="secondName" required="">
+                        </div>
+                        <div class="modal_input">
+                            <label for="Mname">Имя: </label><input id="Mname" type="text" placeholder="Введите Имя" v-model="name" name="name" required="">
+                        </div>
+                        <div class="modal_input">
+                            <label for="Memail">E-MAIL: </label><input id="Memail" type="text" placeholder="Введите E-mail" v-model="email" name="email" required="">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="spinner-grow text-danger" v-if="is_loader" role="status">
+                      <span class="sr-only">Загрузка...</span>
+                    </div>
+                    <!-- <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
+                    <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5> -->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:30%">Отмена</button>
+                    <button  :disabled="is_loader" @click="modalCallForm" type="button" class="btn btn-primary" style="width:30%">В очередь</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <h4>Наступила <strong>Ваша</strong> очередь.</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- <div class="row justify-content-center">
   <div class="col-md-4">
     <div class="card my-4">
         <div class="card-header">Управление</div>
@@ -73,20 +172,7 @@
     </div>
   </div>
 
-  <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-      <div class="modal-content">
-        <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body text-center">
-          <h4>Наступила <strong>Ваша</strong> очередь.</h4>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <div class="modal fade p-relative" id="modalCallForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
               aria-hidden="true">
@@ -129,14 +215,14 @@
             <span class="sr-only">Загрузка...</span>
           </div>
           <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
-          <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Вы уже зарегестрированны в очереди</h5>
+          <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5>
           <button :disabled="is_loader" @click="modalCallForm" class="btn btn-primary ml-auto">Отправить</button>
         </div>
       </div>
     </div>
   </div>
 
-</div>
+</div> -->
 
 </template>
 

@@ -1,0 +1,55 @@
+@media only screen and (max-width: 990px) {
+    .queue {
+        width: 90%;
+        margin: 5% auto;
+    }
+    .logo {
+        width: 50%;
+    }
+    .queue li {
+    	margin-bottom: 3%;
+    }
+    .queue li a {
+        font-size: 1.5em;
+    }
+    .queue li a button {
+    	display: none;
+    }
+    .inline {
+        display: block;
+    }
+    .inline .kezek, .inline button  {
+        width: 100%;
+        font-size: 1.6em;
+    }
+    form {
+        font-size: 2.6em;
+    }
+    .btn {
+        width: 100%!important;
+    }
+    .modal-title {
+        width: 100%;
+        font-size: 2em;
+    }
+    form {
+        width: 100%;
+    }
+    label {
+    }
+    .inline .kezek, .inline button {
+    	margin-bottom: 3%;
+    }
+    .butt {
+    	font-size: 2em!important;
+    }
+    .modal-dialog {
+    	max-width: 90%!important;
+    }
+    .modal_input {
+        margin-bottom: 4%;
+    }
+    .modal-footer {
+        flex-wrap: inherit!important;
+    }
+}
