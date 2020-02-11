@@ -82,8 +82,11 @@ class GuestController extends Controller
 
         Cookie::queue(Cookie::make('queue_'.$id, $newQueue, 60*60*24*30));// Создание куки и помещение её в очередь
 
-        $job = new \App\Jobs\SendNewQueue($newQueue, QueueList::find($id));//Отправить сообщение о создании на почту 
-        app(Dispatcher::class)->dispatch($job);
+        // $job = new \App\Jobs\SendNewQueue($newQueue, QueueList::find($id));//Отправить сообщение о создании на почту 
+        // app(Dispatcher::class)->dispatch($job);
+
+        $email = new \App\Mail\NewQueue($newQueue, QueueList::find($id));
+        \Mail::to($newQueue->email)->send($email); // Прикрутить бы очередь, но пофиг
 
         $queue = QueueList::find($id)->queues()->limit(30)->get();
         broadcast(new \App\Events\QueueStatus($id ,$queue, $all_operators)); //Отсылаем всем обновленную очередь и операторов
