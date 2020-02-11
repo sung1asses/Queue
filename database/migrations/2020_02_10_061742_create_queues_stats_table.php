@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateHistoriesTable extends Migration
+class CreateQueuesStatsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('histories', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('queues_stats', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->string('name');
             $table->string('secondName');
             $table->string('email');
             $table->integer('key');
+            $table->string('status')->default('Посетил');
+
+            $table->integer('user_id');
             $table->integer('queue_list_id');
-            $table->string('status')->nullable();
 
             $table->timestamps();
         });
@@ -33,6 +35,6 @@ class CreateHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('histories');
+        Schema::dropIfExists('queues_stats');
     }
 }

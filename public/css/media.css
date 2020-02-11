@@ -15,9 +15,6 @@
     .queue li a button {
     	display: none;
     }
-    .inline {
-        display: block;
-    }
     .inline .kezek, .inline button  {
         width: 100%;
         font-size: 1.6em;

@@ -10,11 +10,12 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Contracts\Bus\Dispatcher;
 
+use App\OperatorsStat;
 use App\QueueList;
 use App\Queue;
 use App\User;
 use App\Role;
-use App\History;
+use App\QueuesStat;
 class OperatorController extends Controller
 {
 	public function listQueue()
@@ -39,21 +40,20 @@ class OperatorController extends Controller
         $queue = QueueList::find($id)->queues()->find(Auth::user()->queue_id); //заявка оператора
 
         if($queue){ //Проверяем есть ли вообще заявка
-            $newHistory = QueueList::find($id)->histories()->create([ // записываем в историю очередь
+
+            $QueuesStat = QueuesStat::create([ // записываем в историю очередь
                 'name' => $queue->name,
                 'secondName' => $queue->secondName,
                 'email' => $queue->email,
                 'key' => $queue->key,
-                'created_at' => Carbon::now('Asia/Almaty')->roundMinute(),
+                'user_id' => Auth::id(),
+                'queue_list_id' => $id,
+                'created_at' => Carbon::now('Asia/Almaty'),
             ]);
-
-            if($request->status == "succ"){ //Если заявка не была пропущена
-                $newHistory->status = 'Посетил';
-                $newHistory->save();
-            }
-            elseif($request->status == "err"){ //Если заявка была пропущена
-                $newHistory->status = 'Пропустил';
-                $newHistory->save();
+            
+            if($request->status == "err"){ //Если заявка была пропущена
+                $QueuesStat->status = 'Пропустил';
+                $QueuesStat->save();
                 
                 // $job = new \App\Jobs\SendYouAreFired($queue, QueueList::find($id)->name);
                 // app(Dispatcher::class)->dispatch($job);
@@ -77,8 +77,13 @@ class OperatorController extends Controller
                 User::find(Auth::id())->update([
                     'queue_id' => $queue[count($all_operators)-count($active_operators)]->id,
                 ]);//обновляем оператора, который обрабатывал заявку(мы)
+
+                $stat = OperatorsStat::where([['user_id',Auth::id()],['queue_list_id',$id],['ended_at',null]])->first();
+                $stat->queues_count = $stat->queues_count+1;
+                $stat->save();
                 
                 $all_operators = Role::where('group', 'operator')->first()->users()->where([['queue_list_id', $id],['status', 1]])->get();//Выбираем всех операторов, обслуживаюищих очередь
+
             }
 
             broadcast(new \App\Events\QueueStatus($id ,$queue, $all_operators)); //Отсылаем всем обновленную очередь и операторов
@@ -109,6 +114,12 @@ class OperatorController extends Controller
                     'status' => 1,
                     'queue_id' => $queue[count($all_operators)]->id, //Отнимаем от количества всех операторов количество всех незанятых, чтоб получить порядковое число необслуживаемой очереди.
                 ]);
+                OperatorsStat::create([
+                    'user_id' => Auth::id(),
+                    'queue_list_id' => $id,
+                    'queues_count' => 1,
+                    'started_at' => Carbon::now('Asia/Almaty'),
+                ]);
             }
             else{
                 User::find(Auth::id())->update([
@@ -116,7 +127,14 @@ class OperatorController extends Controller
                     'status' => 1,
                     'queue_id' => null, //В противном случае просто меняем статус
                 ]);
+                OperatorsStat::create([
+                    'user_id' => Auth::id(),
+                    'queue_list_id' => $id,
+                    'queues_count' => 0,
+                    'started_at' => Carbon::now('Asia/Almaty'),
+                ]);
             }
+
         }
         else{
             $operator_queue = QueueList::find($id)->queues()->find(Auth::user()->queue_id);
@@ -129,6 +147,7 @@ class OperatorController extends Controller
                 'status' => 0,
                 'queue_id' => null,
             ]);
+            OperatorsStat::where([['user_id',Auth::id()],['queue_list_id',$id],['ended_at',null]])->update(['ended_at' => Carbon::now('Asia/Almaty')]);
         }
 
         $queue = QueueList::find($id)->queues()->limit(30)->get(); //выбираем 10 первых заявок

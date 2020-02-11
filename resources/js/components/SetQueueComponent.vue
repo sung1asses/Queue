@@ -1,13 +1,17 @@
 <template>
 
-<div class="inline">
-    <button  v-if="cookie==0" type="button" class="btn butt btn-primary" data-toggle="modal" data-target="#modalCallForm">Встать в очередь</button>
-    <div v-else>
-      <h3>Вы <b>{{ getIndexFromId }}</b> в списке</h3>
-      <h3>Ваш ключ: <b>{{ cookie.key }}</b></h3>
-      <button @click="deleteQueue" type="button" class="btn butt btn-primary">Выйти с очереди</button>
+<div class="container">
+  <div class="inline row">
+    <div v-if="cookie==0" class="col-md-3">
+      <button type="button" class="btn butt btn-primary w-100 py-4" data-toggle="modal" data-target="#modalCallForm">Встать в очередь</button>
     </div>
-
+    <div v-else class="col-md-3">
+      <h3 v-if="!is_with_operator" class="text-dark">Вы <b>{{ getIndexFromId }}</b> в списке</h3>
+      <h3 v-else class="text-dark">Наступила ваша очередь</h3>
+      <h3 class="text-dark">Ваш ключ: <b>{{ cookie.key }}</b></h3>
+      <button @click="deleteQueue" type="button" class="btn butt btn-primary w-100 py-4">Выйти с очереди</button>
+    </div>
+  
     <table class="kezek">
         <tr>
             <th colspan="3" class="kezek_btn">Список очередей</th>
@@ -20,11 +24,12 @@
         <tr v-for="(queue, key) in queues">
           <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
           <td v-else>{{ key+1 }}</td>
-            <th><i class="fas fa-angle-right"></i></th>
+              <td v-if="queue.id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i></td>
+              <td v-else><i class="fas fa-angle-right"></i></td>
           <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
           <td v-else>{{ queue.key }}</td>
         </tr>
-
+  
     </table>
     <table class="kezek">
         <tr>
@@ -36,11 +41,17 @@
             <th>Талон</th>
         </tr>
         <tr v-for="operator in operators">
-            <td v-if="operator.queue_id!=null">{{ operator.name }}</td>
-            <td v-else style="background-color: #28a745">{{ operator.name }}</td>
-              <th><i class="fas fa-angle-right"></i></th>
-            <td v-if="operator.queue_id!=null">{{ getNameFromId(operator.queue_id) }}</td>
-            <td v-else style="background-color: #28a745">{{ getNameFromId(operator.queue_id) }}</td>
+            <td v-if="operator.queue_id==null" class="bg-success text-white">{{ operator.name }}</td>
+            <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ operator.name }}
+            <td v-else>{{ operator.name }}</td></td>
+
+              <td v-if="operator.queue_id==null" class="bg-success"><i class="fas fa-angle-right text-white"></i></td>
+              <td v-else-if="operator.queue_id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i>
+              <td v-else><i class="fas fa-angle-right"></i></td></td>
+
+            <td v-if="operator.queue_id==null" class="bg-success text-white">Свободен</td>
+            <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ getNameFromId(operator.queue_id) }}
+            <td v-else>{{ getNameFromId(operator.queue_id) }}</td></td>
         </tr>
     </table>
         <!-- Modal -->
@@ -67,30 +78,33 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="spinner-grow text-danger" v-if="is_loader" role="status">
-                      <span class="sr-only">Загрузка...</span>
-                    </div>
-                    <!-- <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
-                    <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5> -->
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:30%">Отмена</button>
-                    <button  :disabled="is_loader" @click="modalCallForm" type="button" class="btn btn-primary" style="width:30%">В очередь</button>
+                  <div class="spinner-grow text-danger" v-if="is_loader" role="status">
+                    <span class="sr-only">Загрузка...</span>
+                  </div>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:30%">Отмена</button>
+                  <button  :disabled="is_loader" @click="modalCallForm" type="button" class="btn btn-primary" style="width:30%">В очередь</button>
+                </div>
+                <div>
+                  <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
+                  <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5>
                 </div>
             </div>
         </div>
     </div>
-
+  
     <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-      <div class="modal-content">
-        <div class="modal-header text-center">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <div class="modal-dialog modal-md">
+        <div class="modal-content">
+          <div class="modal-header text-center">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body text-center">
+            <h4>Наступила <strong>Ваша</strong> очередь.</h4>
+          </div>
         </div>
-        <div class="modal-body text-center">
-          <h4>Наступила <strong>Ваша</strong> очередь.</h4>
-        </div>
-      </div>
+      </div>  
     </div>
   </div>
 </div>
@@ -238,7 +252,8 @@
                 is_loader: false,
                 is_confirm: false,
                 is_error: false,
-                
+                is_with_operator: false,
+
                 cookie: JSON.parse(this.cookie_queue),
                 cookie_flag: false,
 
@@ -248,7 +263,26 @@
             }
         },
         mounted() {
+          console.log(this.operators);
           this.listen();
+        },
+        computed: {
+          getIndexFromId(){
+            if(this.cookie){
+              for(let i=0; i<this.queues.length; i++){
+                if(this.queues[i].id==this.cookie.id){
+                  return ++i;
+                }
+              }
+              for(let i=0; i<this.operator_queues.length; i++){
+                if(this.operator_queues[i].id==this.cookie.id){
+                  this.is_with_operator = true;
+                  return false;
+                }
+              }
+              return "30+"
+            }
+          }
         },
         methods: {
             getNameFromId(id){
@@ -316,6 +350,7 @@
                     }
                     if(flag == 0){
                         this.cookie_flag = false;
+                        this.is_with_operator = false;
                         this.deleteCookie();
                     }
                   }

@@ -22,7 +22,8 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/media.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}" />
 
-    <link rel="shortcut icon" href="icon/aues.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
     <link rel="shortcut icon" href="{{ asset('icon/aues.ico') }}" type="image/x-icon" />
 </head>
 <body>

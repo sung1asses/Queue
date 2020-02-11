@@ -6,9 +6,12 @@ use Illuminate\Http\Request;
 
 use \Illuminate\Support\Carbon;
 
+use Illuminate\Support\Facades\Auth;
+
 use App\QueueList;
 use App\Queue;
-use App\History;
+use App\OperatorsStat;
+use App\QueuesStat;
 
 class AdminStatController extends Controller
 {
@@ -17,8 +20,38 @@ class AdminStatController extends Controller
         $this->middleware('auth');
     }
 
-    public function historyStat(Request $request)
-    {
+    public function operatorStat(/*$id*/){
+        // $operators_stat = QueuesStat::get();
+        // dd($operators_stat);
+        $arr = [
+            ["key" => 1
+            ],
+            ["key" => 2
+            ],
+            ["key" => 3
+            ]
+        ];
+        $arr[0]['key2'] = [
+            ["key" => 1
+            ],
+            ["key" => 2
+            ],
+            ["key" => 3
+            ]
+        ];
+        $date = '2020-02-10';
+        $arr = OperatorsStat::where([['started_at','>',$date.' 00:00:00'],['ended_at','<=',$date.' 23:59:59']])->get();
+        dd($arr);
+        return false;
+    }
+
+    public function getStatForADay(Request $request){
+        if(!$request->date){
+            $request->date = Carbon::now()->toDateString();
+        }
+    }
+
+    public function historyStat(Request $request){
     	if(!$request->date){
     		$request->date = Carbon::now()->toDateString();
     	}

@@ -2194,32 +2194,24 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['user_id'],
   components: {
     LineChart: _LineChart_js__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
-  props: ['queue'],
   data: function data() {
     return {
       datacollection: {},
-      date: null,
-      dateString: 'Сегодня',
-      queue_parsed: JSON.parse(this.queue)
+      date: null
     };
   },
   mounted: function mounted() {
-    console.log(this.queue_parsed);
     this.getData();
   },
   methods: {
     getData: function getData() {
       var _this = this;
 
-      if (this.date) {
-        this.dateString = this.date;
-      }
-
-      axios.post('/admin/GetHistoryStat', {
-        queue_id: this.queue_parsed.id,
+      axios.post('/admin/stat', {
         date: this.date
       }).then(function (response) {
         console.log(response);
@@ -2532,6 +2524,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['queues_json', 'operators_json', 'cookie_queue', 'id'],
   data: function data() {
@@ -2542,6 +2549,7 @@ __webpack_require__.r(__webpack_exports__);
       is_loader: false,
       is_confirm: false,
       is_error: false,
+      is_with_operator: false,
       cookie: JSON.parse(this.cookie_queue),
       cookie_flag: false,
       operator_queues: JSON.parse(this.queues_json).splice(0, JSON.parse(this.operators_json).length),
@@ -2550,7 +2558,28 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
+    console.log(this.operators);
     this.listen();
+  },
+  computed: {
+    getIndexFromId: function getIndexFromId() {
+      if (this.cookie) {
+        for (var i = 0; i < this.queues.length; i++) {
+          if (this.queues[i].id == this.cookie.id) {
+            return ++i;
+          }
+        }
+
+        for (var _i = 0; _i < this.operator_queues.length; _i++) {
+          if (this.operator_queues[_i].id == this.cookie.id) {
+            this.is_with_operator = true;
+            return false;
+          }
+        }
+
+        return "30+";
+      }
+    }
   },
   methods: {
     getNameFromId: function getNameFromId(id) {
@@ -2636,6 +2665,7 @@ __webpack_require__.r(__webpack_exports__);
 
           if (flag == 0) {
             _this4.cookie_flag = false;
+            _this4.is_with_operator = false;
 
             _this4.deleteCookie();
           }
@@ -2648,8 +2678,8 @@ __webpack_require__.r(__webpack_exports__);
         _this4.operators = response.operators; //обновляем очередь
 
         if (_this4.cookie_flag == false) {
-          for (var _i = 0; _i < _this4.operator_queues.length; _i++) {
-            if (_this4.cookie != 0 && _this4.operator_queues[_i].id == _this4.cookie.id) {
+          for (var _i2 = 0; _i2 < _this4.operator_queues.length; _i2++) {
+            if (_this4.cookie != 0 && _this4.operator_queues[_i2].id == _this4.cookie.id) {
               //Если обслуживаемые очереди совпадает с куки
               $('#alert').modal("show"); //показываем уведомление о наступлении очереди
 
@@ -2659,8 +2689,8 @@ __webpack_require__.r(__webpack_exports__);
         } else {
           var _flag = 0;
 
-          for (var _i2 = 0; _i2 < _this4.operator_queues.length; _i2++) {
-            if (_this4.cookie != 0 && _this4.operator_queues[_i2].id == _this4.cookie.id) {
+          for (var _i3 = 0; _i3 < _this4.operator_queues.length; _i3++) {
+            if (_this4.cookie != 0 && _this4.operator_queues[_i3].id == _this4.cookie.id) {
               //Если обслуживаемые очереди совпадает с куки
               _flag = 1;
             }
@@ -82252,49 +82282,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
-    _c(
-      "div",
-      { staticClass: "col-12" },
-      [
-        _c("h3", [_vm._v("Очередь: " + _vm._s(_vm.queue_parsed.name))]),
-        _vm._v(" "),
-        _c("h4", [
-          _vm._v("Выберете дату: "),
-          _c("span", [_vm._v(_vm._s(_vm.dateString))])
-        ]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.date,
-              expression: "date"
-            }
-          ],
-          attrs: { type: "date" },
-          domProps: { value: _vm.date },
-          on: {
-            change: _vm.getData,
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.date = $event.target.value
-            }
+    _c("div", { staticClass: "col-12" }, [
+      _c("h3", [_vm._v("Статистика пользователя")]),
+      _vm._v(" "),
+      _c("h4", [_vm._v("Выберете дату: ")]),
+      _vm._v(" "),
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.date,
+            expression: "date"
           }
-        }),
-        _vm._v(" "),
-        _c("line-chart", {
-          attrs: {
-            "chart-data": _vm.datacollection,
-            height: 200,
-            options: { responsive: true, maintainAspectRation: true }
+        ],
+        attrs: { type: "date" },
+        domProps: { value: _vm.date },
+        on: {
+          change: _vm.getData,
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.date = $event.target.value
           }
-        })
-      ],
-      1
-    )
+        }
+      })
+    ])
   ])
 }
 var staticRenderFns = []
@@ -82380,250 +82394,322 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "inline" }, [
-    _vm.cookie == 0
-      ? _c(
-          "button",
-          {
-            staticClass: "btn butt btn-primary",
-            attrs: {
-              type: "button",
-              "data-toggle": "modal",
-              "data-target": "#modalCallForm"
-            }
-          },
-          [_vm._v("Встать в очередь")]
-        )
-      : _c("div", [
-          _c(
-            "button",
-            {
-              staticClass: "btn butt btn-primary",
-              attrs: { type: "button" },
-              on: { click: _vm.deleteQueue }
-            },
-            [_vm._v("Выйти с очереди")]
-          )
-        ]),
-    _vm._v(" "),
-    _c(
-      "table",
-      { staticClass: "kezek" },
-      [
-        _vm._m(0),
-        _vm._v(" "),
-        _vm._m(1),
-        _vm._v(" "),
-        _vm._l(_vm.queues, function(queue, key) {
-          return _c("tr", [
-            queue.id == _vm.cookie.id
-              ? _c("td", { staticClass: "bg-warning" }, [
-                  _vm._v(_vm._s(key + 1))
-                ])
-              : _c("td", [_vm._v(_vm._s(key + 1))]),
-            _vm._v(" "),
-            queue.id == _vm.cookie.id
-              ? _c("td", { staticClass: "bg-warning" }, [
-                  _vm._v(_vm._s(queue.key))
-                ])
-              : _c("td", [_vm._v(_vm._s(queue.key))])
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "inline row" }, [
+      _vm.cookie == 0
+        ? _c("div", { staticClass: "col-md-3" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn butt btn-primary w-100 py-4",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#modalCallForm"
+                }
+              },
+              [_vm._v("Встать в очередь")]
+            )
           ])
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c(
-      "table",
-      { staticClass: "kezek" },
-      [
-        _vm._m(2),
-        _vm._v(" "),
-        _vm._m(3),
-        _vm._v(" "),
-        _vm._l(_vm.operators, function(operator) {
-          return _c("tr", [
-            operator.queue_id != null
-              ? _c("td", [_vm._v(_vm._s(operator.name))])
-              : _c("td", { staticStyle: { "background-color": "#28a745" } }, [
-                  _vm._v(_vm._s(operator.name))
+        : _c("div", { staticClass: "col-md-3" }, [
+            !_vm.is_with_operator
+              ? _c("h3", { staticClass: "text-dark" }, [
+                  _vm._v("Вы "),
+                  _c("b", [_vm._v(_vm._s(_vm.getIndexFromId))]),
+                  _vm._v(" в списке")
+                ])
+              : _c("h3", { staticClass: "text-dark" }, [
+                  _vm._v("Наступила ваша очередь")
                 ]),
             _vm._v(" "),
-            _vm._m(4, true),
+            _c("h3", { staticClass: "text-dark" }, [
+              _vm._v("Ваш ключ: "),
+              _c("b", [_vm._v(_vm._s(_vm.cookie.key))])
+            ]),
             _vm._v(" "),
-            operator.queue_id != null
-              ? _c("td", [_vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))])
-              : _c("td", { staticStyle: { "background-color": "#28a745" } }, [
-                  _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
-                ])
-          ])
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "modalCallForm",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "myModalLabel",
-          "aria-hidden": "true"
-        }
-      },
-      [
-        _c(
-          "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _vm._m(5),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _c("div", { staticClass: "form" }, [
-                  _c("div", { staticClass: "modal_input" }, [
-                    _c("label", { attrs: { for: "MsecName" } }, [
-                      _vm._v("Фамилия: ")
-                    ]),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.secondName,
-                          expression: "secondName"
-                        }
-                      ],
-                      attrs: {
-                        id: "MsecName",
-                        type: "text",
-                        placeholder: "Введите Фамилию",
-                        name: "secondName",
-                        required: ""
-                      },
-                      domProps: { value: _vm.secondName },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.secondName = $event.target.value
-                        }
-                      }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "modal_input" }, [
-                    _c("label", { attrs: { for: "Mname" } }, [_vm._v("Имя: ")]),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.name,
-                          expression: "name"
-                        }
-                      ],
-                      attrs: {
-                        id: "Mname",
-                        type: "text",
-                        placeholder: "Введите Имя",
-                        name: "name",
-                        required: ""
-                      },
-                      domProps: { value: _vm.name },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.name = $event.target.value
-                        }
-                      }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "modal_input" }, [
-                    _c("label", { attrs: { for: "Memail" } }, [
-                      _vm._v("E-MAIL: ")
-                    ]),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.email,
-                          expression: "email"
-                        }
-                      ],
-                      attrs: {
-                        id: "Memail",
-                        type: "text",
-                        placeholder: "Введите E-mail",
-                        name: "email",
-                        required: ""
-                      },
-                      domProps: { value: _vm.email },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.email = $event.target.value
-                        }
-                      }
-                    })
+            _c(
+              "button",
+              {
+                staticClass: "btn butt btn-primary w-100 py-4",
+                attrs: { type: "button" },
+                on: { click: _vm.deleteQueue }
+              },
+              [_vm._v("Выйти с очереди")]
+            )
+          ]),
+      _vm._v(" "),
+      _c(
+        "table",
+        { staticClass: "kezek" },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _vm._m(1),
+          _vm._v(" "),
+          _vm._l(_vm.queues, function(queue, key) {
+            return _c("tr", [
+              queue.id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _vm._v(_vm._s(key + 1))
                   ])
-                ])
-              ]),
+                : _c("td", [_vm._v(_vm._s(key + 1))]),
               _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _vm.is_loader
-                  ? _c(
-                      "div",
-                      {
-                        staticClass: "spinner-grow text-danger",
-                        attrs: { role: "status" }
-                      },
-                      [
-                        _c("span", { staticClass: "sr-only" }, [
-                          _vm._v("Загрузка...")
-                        ])
-                      ]
-                    )
-                  : _vm._e(),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-secondary",
-                    staticStyle: { width: "30%" },
-                    attrs: { type: "button", "data-dismiss": "modal" }
-                  },
-                  [_vm._v("Отмена")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    staticStyle: { width: "30%" },
-                    attrs: { disabled: _vm.is_loader, type: "button" },
-                    on: { click: _vm.modalCallForm }
-                  },
-                  [_vm._v("В очередь")]
-                )
-              ])
+              queue.id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _c("i", { staticClass: "fas fa-angle-right text-dark" })
+                  ])
+                : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
+              _vm._v(" "),
+              queue.id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _vm._v(_vm._s(queue.key))
+                  ])
+                : _c("td", [_vm._v(_vm._s(queue.key))])
             ])
-          ]
-        )
-      ]
-    ),
-    _vm._v(" "),
-    _vm._m(6)
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c(
+        "table",
+        { staticClass: "kezek" },
+        [
+          _vm._m(2),
+          _vm._v(" "),
+          _vm._m(3),
+          _vm._v(" "),
+          _vm._l(_vm.operators, function(operator) {
+            return _c("tr", [
+              operator.queue_id == null
+                ? _c("td", { staticClass: "bg-success text-white" }, [
+                    _vm._v(_vm._s(operator.name))
+                  ])
+                : operator.queue_id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _vm._v(_vm._s(operator.name) + "\n            ")
+                  ])
+                : _c("td", [_vm._v(_vm._s(operator.name))]),
+              _vm._v(" "),
+              operator.queue_id == null
+                ? _c("td", { staticClass: "bg-success" }, [
+                    _c("i", { staticClass: "fas fa-angle-right text-white" })
+                  ])
+                : operator.queue_id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _c("i", { staticClass: "fas fa-angle-right text-dark" })
+                  ])
+                : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
+              _vm._v(" "),
+              operator.queue_id == null
+                ? _c("td", { staticClass: "bg-success text-white" }, [
+                    _vm._v("Свободен")
+                  ])
+                : operator.queue_id == _vm.cookie.id
+                ? _c("td", { staticClass: "bg-warning" }, [
+                    _vm._v(
+                      _vm._s(_vm.getNameFromId(operator.queue_id)) +
+                        "\n            "
+                    )
+                  ])
+                : _c("td", [
+                    _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
+                  ])
+            ])
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "modalCallForm",
+            tabindex: "-1",
+            role: "dialog",
+            "aria-labelledby": "myModalLabel",
+            "aria-hidden": "true"
+          }
+        },
+        [
+          _c(
+            "div",
+            { staticClass: "modal-dialog", attrs: { role: "document" } },
+            [
+              _c("div", { staticClass: "modal-content" }, [
+                _vm._m(4),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-body" }, [
+                  _c("div", { staticClass: "form" }, [
+                    _c("div", { staticClass: "modal_input" }, [
+                      _c("label", { attrs: { for: "MsecName" } }, [
+                        _vm._v("Фамилия: ")
+                      ]),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.secondName,
+                            expression: "secondName"
+                          }
+                        ],
+                        attrs: {
+                          id: "MsecName",
+                          type: "text",
+                          placeholder: "Введите Фамилию",
+                          name: "secondName",
+                          required: ""
+                        },
+                        domProps: { value: _vm.secondName },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.secondName = $event.target.value
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal_input" }, [
+                      _c("label", { attrs: { for: "Mname" } }, [
+                        _vm._v("Имя: ")
+                      ]),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.name,
+                            expression: "name"
+                          }
+                        ],
+                        attrs: {
+                          id: "Mname",
+                          type: "text",
+                          placeholder: "Введите Имя",
+                          name: "name",
+                          required: ""
+                        },
+                        domProps: { value: _vm.name },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.name = $event.target.value
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "modal_input" }, [
+                      _c("label", { attrs: { for: "Memail" } }, [
+                        _vm._v("E-MAIL: ")
+                      ]),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.email,
+                            expression: "email"
+                          }
+                        ],
+                        attrs: {
+                          id: "Memail",
+                          type: "text",
+                          placeholder: "Введите E-mail",
+                          name: "email",
+                          required: ""
+                        },
+                        domProps: { value: _vm.email },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.email = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "modal-footer" }, [
+                  _vm.is_loader
+                    ? _c(
+                        "div",
+                        {
+                          staticClass: "spinner-grow text-danger",
+                          attrs: { role: "status" }
+                        },
+                        [
+                          _c("span", { staticClass: "sr-only" }, [
+                            _vm._v("Загрузка...")
+                          ])
+                        ]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-secondary",
+                      staticStyle: { width: "30%" },
+                      attrs: { type: "button", "data-dismiss": "modal" }
+                    },
+                    [_vm._v("Отмена")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      staticStyle: { width: "30%" },
+                      attrs: { disabled: _vm.is_loader, type: "button" },
+                      on: { click: _vm.modalCallForm }
+                    },
+                    [_vm._v("В очередь")]
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", [
+                  _vm.is_confirm
+                    ? _c(
+                        "h5",
+                        {
+                          staticClass:
+                            "text-center border-bottom border-success m-0 p-0"
+                        },
+                        [_vm._v("Вы встали в очередь")]
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.is_error
+                    ? _c(
+                        "h5",
+                        {
+                          staticClass:
+                            "text-center border-bottom border-danger m-0 p-0"
+                        },
+                        [_vm._v("Необработанная ошибка")]
+                      )
+                    : _vm._e()
+                ])
+              ])
+            ]
+          )
+        ]
+      ),
+      _vm._v(" "),
+      _vm._m(5)
+    ])
   ])
 }
 var staticRenderFns = [
@@ -82670,12 +82756,6 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Талон")])
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("th", [_c("i", { staticClass: "fas fa-angle-right" })])
   },
   function() {
     var _vm = this
@@ -95470,8 +95550,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/roman/HTML/Queue/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/roman/HTML/Queue/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/roman/html/LARAVEL/Queue2/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/roman/html/LARAVEL/Queue2/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
