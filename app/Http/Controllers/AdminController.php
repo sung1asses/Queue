@@ -13,7 +13,6 @@ use App\QueueList;
 use App\Queue;
 use App\User;
 use App\Role;
-use App\History;
 class AdminController extends Controller
 {
 	public function home()
@@ -67,8 +66,8 @@ class AdminController extends Controller
     }
     public function deleteQueue($id)
     {
+        QueueList::find($id)->users()->detach();
         QueueList::find($id)->queues()->delete();
-        QueueList::find($id)->histories()->delete();
         QueueList::find($id)->delete();
         return redirect()->route('admin.queue.list');
     }
