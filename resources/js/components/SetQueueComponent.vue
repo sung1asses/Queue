@@ -2,241 +2,115 @@
 
 <div class="container">
   <div class="inline row">
-    <div v-if="cookie==0" class="col-md-3">
+    <div v-if="cookie==0" class="col-md-4">
       <button type="button" class="btn butt btn-primary w-100 py-4" data-toggle="modal" data-target="#modalCallForm">Встать в очередь</button>
     </div>
-    <div v-else class="col-md-3">
+    <div v-else class="col-md-4">
       <h3 v-if="!is_with_operator" class="text-dark">Вы <b>{{ getIndexFromId }}</b> в списке</h3>
       <h3 v-else class="text-dark">Наступила ваша очередь</h3>
       <h3 class="text-dark">Ваш ключ: <b>{{ cookie.key }}</b></h3>
       <button @click="deleteQueue" type="button" class="btn butt btn-primary w-100 py-4">Выйти с очереди</button>
     </div>
   
-    <table class="kezek">
-        <tr>
-            <th colspan="3" class="kezek_btn">Список очередей</th>
-        </tr>
-        <tr>
-            <th>Очередь</th>
-            <th><i class="fas fa-angle-right"></i></th>
-            <th>Талон</th>
-        </tr>
-        <tr v-for="(queue, key) in queues">
-          <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
-          <td v-else>{{ key+1 }}</td>
-              <td v-if="queue.id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i></td>
-              <td v-else><i class="fas fa-angle-right"></i></td>
-          <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
-          <td v-else>{{ queue.key }}</td>
-        </tr>
-  
-    </table>
-    <table class="kezek">
-        <tr>
-            <th colspan="3" class="kezek_btn">Список опеаторов</th>
-        </tr>
-        <tr>
-            <th>Операторы</th>
-            <th><i class="fas fa-angle-right"></i></th>
-            <th>Талон</th>
-        </tr>
-        <tr v-for="operator in operators">
-            <td v-if="operator.queue_id==null" class="bg-success text-white">{{ operator.name }}</td>
-            <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ operator.name }}
-            <td v-else>{{ operator.name }}</td></td>
-
-              <td v-if="operator.queue_id==null" class="bg-success"><i class="fas fa-angle-right text-white"></i></td>
-              <td v-else-if="operator.queue_id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i>
-              <td v-else><i class="fas fa-angle-right"></i></td></td>
-
-            <td v-if="operator.queue_id==null" class="bg-success text-white">Свободен</td>
-            <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ getNameFromId(operator.queue_id) }}
-            <td v-else>{{ getNameFromId(operator.queue_id) }}</td></td>
-        </tr>
-    </table>
+    <div class="col-md-4">
+      <table class="kezek">
+          <tr>
+              <th colspan="3" class="kezek_btn">Список очередей</th>
+          </tr>
+          <tr>
+              <th>Очередь</th>
+              <th><i class="fas fa-angle-right"></i></th>
+              <th>Талон</th>
+          </tr>
+          <tr v-for="(queue, key) in queues">
+            <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
+            <td v-else>{{ key+1 }}</td>
+                <td v-if="queue.id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i></td>
+                <td v-else><i class="fas fa-angle-right"></i></td>
+            <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
+            <td v-else>{{ queue.key }}</td>
+          </tr>
+        
+      </table>
+    </div>
+    <div class="col-md-4">
+      <table class="kezek">
+          <tr>
+              <th colspan="3" class="kezek_btn">Список опеаторов</th>
+          </tr>
+          <tr>
+              <th>Операторы</th>
+              <th><i class="fas fa-angle-right"></i></th>
+              <th>Талон</th>
+          </tr>
+          <tr v-for="operator in operators">
+              <td v-if="operator.queue_id==null" class="bg-success text-white">{{ operator.name }}</td>
+              <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ operator.name }}
+              <td v-else>{{ operator.name }}</td></td>
+      
+                <td v-if="operator.queue_id==null" class="bg-success"><i class="fas fa-angle-right text-white"></i></td>
+                <td v-else-if="operator.queue_id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i>
+                <td v-else><i class="fas fa-angle-right"></i></td></td>
+      
+              <td v-if="operator.queue_id==null" class="bg-success text-white">Свободен</td>
+              <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ getNameFromId(operator.queue_id) }}
+              <td v-else>{{ getNameFromId(operator.queue_id) }}</td></td>
+          </tr>
+      </table>
+    </div>
         <!-- Modal -->
-    <div class="modal fade" id="modalCallForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Встать в очередь</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form">
-                        <div class="modal_input">
-                            <label for="MsecName">Фамилия: </label><input id="MsecName" type="text" placeholder="Введите Фамилию" v-model="secondName" name="secondName" required="">
-                        </div>
-                        <div class="modal_input">
-                            <label for="Mname">Имя: </label><input id="Mname" type="text" placeholder="Введите Имя" v-model="name" name="name" required="">
-                        </div>
-                        <div class="modal_input">
-                            <label for="Memail">E-MAIL: </label><input id="Memail" type="text" placeholder="Введите E-mail" v-model="email" name="email" required="">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                  <div class="spinner-grow text-danger" v-if="is_loader" role="status">
-                    <span class="sr-only">Загрузка...</span>
+  </div>
+  <div class="modal fade" id="modalCallForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Встать в очередь</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <div class="form">
+                      <div class="modal_input">
+                          <label for="Mname">Фамилия Имя: </label><input id="Mname" type="text" placeholder="Введите Имя" v-model="name" name="name" required="">
+                      </div>
+                      <div class="modal_input">
+                          <label for="Memail">E-MAIL: </label><input id="Memail" type="text" placeholder="Введите E-mail" v-model="email" name="email" required="">
+                      </div>
                   </div>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:30%">Отмена</button>
-                  <button  :disabled="is_loader" @click="modalCallForm" type="button" class="btn btn-primary" style="width:30%">В очередь</button>
+              </div>
+              <div class="modal-footer">
+                <div class="spinner-grow text-danger" v-if="is_loader" role="status">
+                  <span class="sr-only">Загрузка...</span>
                 </div>
-                <div>
-                  <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
-                  <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5>
+                <button type="button" class="btn butt" data-dismiss="modal" style="width:30%">Отмена</button>
+                <button  :disabled="is_loader" @click="modalCallForm" type="button" class="btn butt" style="width:30%">В очередь</button>
+              </div>
+              <div>
+                <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
+                <div v-if="is_error" v-for="err in is_error_arr">
+                  <h5 class="text-center border-bottom border-danger m-1 p-1">{{ err[0] }}</h5>
                 </div>
-            </div>
-        </div>
-    </div>
-  
-    <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-md">
-        <div class="modal-content">
-          <div class="modal-header text-center">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+              </div>
           </div>
-          <div class="modal-body text-center">
-            <h4>Наступила <strong>Ваша</strong> очередь.</h4>
-          </div>
-        </div>
-      </div>  
-    </div>
-  </div>
-</div>
-
-
-
-
-<!-- <div class="row justify-content-center">
-  <div class="col-md-4">
-    <div class="card my-4">
-        <div class="card-header">Управление</div>
-        <div class="card-body">
-          <div>
-
-            <button v-if="cookie==0" type="button" class="btn btn-primary w-100 p-3" data-toggle="modal" data-target="#modalCallForm">
-              Встать в очередь
-            </button>
-            
-            <div v-else>
-              <h3>Ваш ключ: <b>{{ cookie.key }}</b></h3>
-              <h3><button @click="deleteQueue" type="button" class="btn btn-danger w-100 p-3">Выйти с очереди</button></h3>
-            </div>
-
-          </div>
-        </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card my-4">
-      <div class="card-header text-center">Очередь</div>
-      <div class="card-body p-0">
-        <div class="row">
-          <div class="col">
-            
-            <table class="table table-striped mb-0">
-              <thead>
-                <tr class="text-center">
-                  <th scope="col">Ключ</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="queue in queues">
-                  <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
-                  <td v-else>{{ queue.key }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="card my-4">
-      <div class="card-header text-center">Операторы</div>
-      <div class="card-body p-0">
-        <div class="row">
-          <div class="col">
-            
-            <table class="table table-striped mb-0">
-              <thead>
-                <tr class="text-center">
-                  <th scope="col">Оператор</th>
-                  <th scope="col">Ключ</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="operator in operators">
-                    <td v-if="operator.queue_id!=null">{{ operator.name }}</td>
-                    <td v-else class="text-white" style="background-color: #28a745">{{ operator.name }}</td>
-                    <td v-if="operator.queue_id!=null">{{ getNameFromId(operator.queue_id) }}</td>
-                    <td v-else class="text-white" style="background-color: #28a745">{{ getNameFromId(operator.queue_id) }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
-
-
-  <div class="modal fade p-relative" id="modalCallForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-              aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content" id="needs-validation1">
+  <div id="alert" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+      <div class="modal-content">
         <div class="modal-header text-center">
-          <h4 class="modal-title w-100 font-weight-bold">Встать в очередь</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body mx-3">
-            <div class="form">
-              <div class="form-group row">
-                 <label for="name" class="col-md-5 col-form-label text-md-right">Ваше имя</label>
-                                     
-                 <div class="col-md-7">
-                     <input type="text" min="0" class="form-control" placeholder="Ivan" v-model="name" name="name" required="">
-                 </div>
-              </div>
-              <div class="form-group row">
-                 <label for="secondName" class="col-md-5 col-form-label text-md-right">Ваша фамилия</label>
-                                     
-                 <div class="col-md-7">
-                     <input type="text" min="0" class="form-control" v-model="secondName" placeholder="Ivanov" name="secondName" required="">
-                 </div>
-              </div>
-              <div class="form-group row">
-                 <label for="email" class="col-md-5 col-form-label text-md-right">Ваша почта</label>
-                                     
-                 <div class="col-md-7">
-                     <input type="email" min="0" class="form-control" v-model="email" placeholder="Ivan777@gmail.ru" name="email" required="">
-                 </div>
-              </div>
-            </div>
-            
-        </div>
-        <div class="modal-footer d-flex justify-content-between">
-          <div class="spinner-grow text-primary" v-if="is_loader" role="status">
-            <span class="sr-only">Загрузка...</span>
-          </div>
-          <h5 v-if="is_confirm" class="text-center border-bottom border-success m-0 p-0">Вы встали в очередь</h5>
-          <h5 v-if="is_error" class="text-center border-bottom border-danger m-0 p-0">Необработанная ошибка</h5>
-          <button :disabled="is_loader" @click="modalCallForm" class="btn btn-primary ml-auto">Отправить</button>
+        <div class="modal-body text-center">
+          <h4>Наступила <strong>Ваша</strong> очередь.</h4>
         </div>
       </div>
-    </div>
+    </div>  
   </div>
-
-</div> -->
+</div>
 
 </template>
 
@@ -246,13 +120,14 @@
         data:function(){
             return{
                 name: '',
-                secondName: '',
                 email: '',
 
                 is_loader: false,
                 is_confirm: false,
                 is_error: false,
                 is_with_operator: false,
+
+                is_error_arr: [],
 
                 cookie: JSON.parse(this.cookie_queue),
                 cookie_flag: false,
@@ -263,7 +138,6 @@
             }
         },
         mounted() {
-          console.log(this.operators);
           this.listen();
         },
         computed: {
@@ -316,25 +190,29 @@
             },
             modalCallForm() {
                 this.is_loader = true;//показываем прелоадер
+
                 axios.post('/'+this.id, {
                   name: this.name,
-                  secondName: this.secondName,
                   email: this.email,
                 })
                 .then((response) => {
-                  console.log(response.data);
-                  this.cookie = response.data;//назначаем куки
-                  this.is_loader=false;//убираем прелоадер
-                  this.is_confirm=true;//показать сообщние об успехе
-                  setTimeout(() => this.is_confirm = false, 2000);//скрыть сообщние об успехе
-                  setTimeout(() => $('#modalCallForm').modal('hide'), 2000);//скрыть модальное окно
+                  console.log(response.data.validation);
+                  if(!response.data.validation){
+                    this.cookie = response.data;//назначаем куки
+                    this.is_loader=false;//убираем прелоадер
+                    this.is_confirm=true;//показать сообщние об успехе
+                    setTimeout(() => this.is_confirm = false, 2000);//скрыть сообщние об успехе
+                    setTimeout(() => $('#modalCallForm').modal('hide'), 2000);//скрыть модальное окно
+                  }
+                  else{
+                    this.is_loader=false;//показать лоадер
+                    this.is_error=true;//показать сообщние об провале
+                    this.is_error_arr=response.data.validation;
+                    setTimeout(() => this.is_error = false, 3000);//скрыть сообщние об провале
+                  }
                 })
                 .catch((error) => {
                   console.log(error);
-                  this.is_loader=false;//показать лоадер
-                  this.is_error=true;//показать сообщние об провале
-                  setTimeout(() => this.is_error = false, 3000);//скрыть сообщние об провале
-                  setTimeout(() => $('#modalCallForm').modal('hide'), 3000);//скрыть модальное окно
                 })
             },
             listen() {

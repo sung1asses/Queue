@@ -1,9 +1,10 @@
-* {
-    margin: .5% 1%;
+html {
+    margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 .logo {
+    margin:1% 1% 0 1%;
     width: 12%;
 }
 h1 {
@@ -42,7 +43,6 @@ h1 {
 }
 /*queue*/
 .inline .kezek {
-    width: 30%;
     background: #fafafa;
 }
 .inline table tr th {
@@ -59,7 +59,7 @@ h1 {
     font-size: 1.6em;
     color: #2d496e;
 }
-.inline .btn {
+.btn.butt{
     padding: 1.4% 1.5%;
     font-size: 1.2em;
     border: none;

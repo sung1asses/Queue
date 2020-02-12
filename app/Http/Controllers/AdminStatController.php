@@ -20,29 +20,26 @@ class AdminStatController extends Controller
         $this->middleware('auth');
     }
 
-    public function operatorStat(/*$id*/){
-        // $operators_stat = QueuesStat::get();
-        // dd($operators_stat);
-        $arr = [
-            ["key" => 1
-            ],
-            ["key" => 2
-            ],
-            ["key" => 3
-            ]
-        ];
-        $arr[0]['key2'] = [
-            ["key" => 1
-            ],
-            ["key" => 2
-            ],
-            ["key" => 3
-            ]
-        ];
-        $date = '2020-02-10';
-        $arr = OperatorsStat::where([['started_at','>',$date.' 00:00:00'],['ended_at','<=',$date.' 23:59:59']])->get();
-        dd($arr);
-        return false;
+    public function operatorStat(Request $request){
+        if(!$request->date){
+            $request->date = Carbon::now()->toDateString();
+        }
+        $arr = OperatorsStat::where([
+            ['started_at','>',$request->date.' 00:00:00'],
+            ['ended_at','<=',$request->date.' 23:59:59'],
+            ['user_id',$request->user_id],
+        ])->get();
+
+        foreach ($arr as $key => $value) {
+            $arr[$key]['queues'] = QueuesStat::where([
+                ['created_at','>',$value->started_at],
+                ['created_at','<=',$value->ended_at],
+                ['user_id',$request->user_id],
+                ['queue_list_id',$value->queue_list_id],
+            ])->get();
+            $arr[$key]['queue_name'] = QueueList::find($value->queue_list_id)->name;
+        }
+        return $arr;
     }
 
     public function getStatForADay(Request $request){

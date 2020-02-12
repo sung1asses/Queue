@@ -47,12 +47,11 @@ class GuestController extends Controller
         
     	$validation = \Illuminate\Support\Facades\Validator::make($request->all(), [ //Валидация
             'name' => ['required', 'string', 'max:255'],
-            'secondName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255']
         ]);
 
         if($validation->fails() || QueueList::find($id)->queues()->where('email', $request->email)->first()) {
-            return abort(500);
+            return ["validation" => $validation->errors()];
         }
 
         $key = rand(1000,9999);//Генерация уникального ключа
@@ -61,7 +60,6 @@ class GuestController extends Controller
         }
         $newQueue = QueueList::find($id)->queues()->create([//Создание заявки
 			'name' => $request->name,
-			'secondName' => $request->secondName,
 			'email' => $request->email,
 			'key' => $key,
         ]);

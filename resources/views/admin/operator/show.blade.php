@@ -9,16 +9,16 @@
 @section('content')
 <div class="row justify-content-center">
   
-  <!-- <div class="col-md-6">
+  <div class="col-md-6">
         <div class="card card-primary">
             <div class="card-header with-border">
               <h3 class="card-title">Статистика</h3>
             </div>
             <div class="card-body">
-              <history-stat-chart-component user_id="$id"></history-stat-chart-component>
+              <history-stat-chart-component user_id="{{ $operator->id }}"></history-stat-chart-component>
             </div>
         </div>
-    </div> -->
+    </div>
     <div class="col-md-6">
         <div class="card card-primary">
             <div class="card-header with-border">

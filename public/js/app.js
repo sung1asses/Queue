@@ -2192,16 +2192,57 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user_id'],
-  components: {
-    LineChart: _LineChart_js__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
+  // components: {
+  //     LineChart
+  // },
   data: function data() {
     return {
+      errors: [],
       datacollection: {},
-      date: null
+      date: ''
     };
   },
   mounted: function mounted() {
@@ -2212,10 +2253,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.post('/admin/stat', {
-        date: this.date
+        date: this.date,
+        user_id: this.user_id
       }).then(function (response) {
-        console.log(response);
         _this.datacollection = response.data;
+        console.log(_this.datacollection);
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2413,143 +2455,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['queues_json', 'operators_json', 'cookie_queue', 'id'],
   data: function data() {
     return {
       name: '',
-      secondName: '',
       email: '',
       is_loader: false,
       is_confirm: false,
       is_error: false,
       is_with_operator: false,
+      is_error_arr: [],
       cookie: JSON.parse(this.cookie_queue),
       cookie_flag: false,
       operator_queues: JSON.parse(this.queues_json).splice(0, JSON.parse(this.operators_json).length),
@@ -2558,7 +2474,6 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    console.log(this.operators);
     this.listen();
   },
   computed: {
@@ -2616,36 +2531,36 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post('/' + this.id, {
         name: this.name,
-        secondName: this.secondName,
         email: this.email
       }).then(function (response) {
-        console.log(response.data);
-        _this3.cookie = response.data; //назначаем куки
+        console.log(response.data.validation);
 
-        _this3.is_loader = false; //убираем прелоадер
+        if (!response.data.validation) {
+          _this3.cookie = response.data; //назначаем куки
 
-        _this3.is_confirm = true; //показать сообщние об успехе
+          _this3.is_loader = false; //убираем прелоадер
 
-        setTimeout(function () {
-          return _this3.is_confirm = false;
-        }, 2000); //скрыть сообщние об успехе
+          _this3.is_confirm = true; //показать сообщние об успехе
 
-        setTimeout(function () {
-          return $('#modalCallForm').modal('hide');
-        }, 2000); //скрыть модальное окно
+          setTimeout(function () {
+            return _this3.is_confirm = false;
+          }, 2000); //скрыть сообщние об успехе
+
+          setTimeout(function () {
+            return $('#modalCallForm').modal('hide');
+          }, 2000); //скрыть модальное окно
+        } else {
+          _this3.is_loader = false; //показать лоадер
+
+          _this3.is_error = true; //показать сообщние об провале
+
+          _this3.is_error_arr = response.data.validation;
+          setTimeout(function () {
+            return _this3.is_error = false;
+          }, 3000); //скрыть сообщние об провале
+        }
       })["catch"](function (error) {
         console.log(error);
-        _this3.is_loader = false; //показать лоадер
-
-        _this3.is_error = true; //показать сообщние об провале
-
-        setTimeout(function () {
-          return _this3.is_error = false;
-        }, 3000); //скрыть сообщние об провале
-
-        setTimeout(function () {
-          return $('#modalCallForm').modal('hide');
-        }, 3000); //скрыть модальное окно
       });
     },
     listen: function listen() {
@@ -82284,6 +82199,11 @@ var render = function() {
   return _c("div", { staticClass: "row" }, [
     _c("div", { staticClass: "col-12" }, [
       _c("h3", [_vm._v("Статистика пользователя")]),
+      _c("hr"),
+      _vm._v(" "),
+      _vm.date == ""
+        ? _c("h4", [_vm._v("Статистика за сегодня")])
+        : _c("h4", [_vm._v("Статистика за " + _vm._s(_vm.date))]),
       _vm._v(" "),
       _c("h4", [_vm._v("Выберете дату: ")]),
       _vm._v(" "),
@@ -82307,11 +82227,115 @@ var render = function() {
             _vm.date = $event.target.value
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "accordion mt-3", attrs: { id: "accordion" } },
+        _vm._l(_vm.datacollection, function(data) {
+          return _c("div", { staticClass: "card" }, [
+            _c(
+              "div",
+              { staticClass: "card-header", attrs: { id: "headingOne" } },
+              [
+                _c("h2", { staticClass: "mb-0" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-link collapsed",
+                      attrs: {
+                        type: "button",
+                        "data-toggle": "collapse",
+                        "data-target": "#target_" + data.id,
+                        "aria-expanded": "true",
+                        "aria-controls": "target_" + data.id
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                  Очередь: " +
+                          _vm._s(data.queue_name) +
+                          ". Обслужено: " +
+                          _vm._s(data.queues.length) +
+                          ". "
+                      ),
+                      _c("br"),
+                      _vm._v(
+                        "\n                  " +
+                          _vm._s(data.started_at) +
+                          "  -  " +
+                          _vm._s(data.ended_at) +
+                          " \n                "
+                      )
+                    ]
+                  )
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              {
+                staticClass: "collapse",
+                attrs: {
+                  id: "target_" + data.id,
+                  "aria-labelledby": "target_" + data.id,
+                  "data-parent": "#accordion"
+                }
+              },
+              [
+                _c("div", { staticClass: "card-body p-0" }, [
+                  _c("table", { staticClass: "table table-striped" }, [
+                    _vm._m(0, true),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(data.queues, function(queue) {
+                        return _c("tr", [
+                          _c("td", [_vm._v(_vm._s(queue.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(queue.status))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(queue.email))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(queue.key))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(queue.created_at))])
+                        ])
+                      }),
+                      0
+                    )
+                  ])
+                ])
+              ]
+            )
+          ])
+        }),
+        0
+      )
     ])
   ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Имя")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Статус")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Почта")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Время")])
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -82397,7 +82421,7 @@ var render = function() {
   return _c("div", { staticClass: "container" }, [
     _c("div", { staticClass: "inline row" }, [
       _vm.cookie == 0
-        ? _c("div", { staticClass: "col-md-3" }, [
+        ? _c("div", { staticClass: "col-md-4" }, [
             _c(
               "button",
               {
@@ -82411,7 +82435,7 @@ var render = function() {
               [_vm._v("Встать в очередь")]
             )
           ])
-        : _c("div", { staticClass: "col-md-3" }, [
+        : _c("div", { staticClass: "col-md-4" }, [
             !_vm.is_with_operator
               ? _c("h3", { staticClass: "text-dark" }, [
                   _vm._v("Вы "),
@@ -82438,248 +82462,223 @@ var render = function() {
             )
           ]),
       _vm._v(" "),
-      _c(
-        "table",
-        { staticClass: "kezek" },
-        [
-          _vm._m(0),
-          _vm._v(" "),
-          _vm._m(1),
-          _vm._v(" "),
-          _vm._l(_vm.queues, function(queue, key) {
-            return _c("tr", [
-              queue.id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _vm._v(_vm._s(key + 1))
-                  ])
-                : _c("td", [_vm._v(_vm._s(key + 1))]),
-              _vm._v(" "),
-              queue.id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _c("i", { staticClass: "fas fa-angle-right text-dark" })
-                  ])
-                : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
-              _vm._v(" "),
-              queue.id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _vm._v(_vm._s(queue.key))
-                  ])
-                : _c("td", [_vm._v(_vm._s(queue.key))])
-            ])
-          })
-        ],
-        2
-      ),
-      _vm._v(" "),
-      _c(
-        "table",
-        { staticClass: "kezek" },
-        [
-          _vm._m(2),
-          _vm._v(" "),
-          _vm._m(3),
-          _vm._v(" "),
-          _vm._l(_vm.operators, function(operator) {
-            return _c("tr", [
-              operator.queue_id == null
-                ? _c("td", { staticClass: "bg-success text-white" }, [
-                    _vm._v(_vm._s(operator.name))
-                  ])
-                : operator.queue_id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _vm._v(_vm._s(operator.name) + "\n            ")
-                  ])
-                : _c("td", [_vm._v(_vm._s(operator.name))]),
-              _vm._v(" "),
-              operator.queue_id == null
-                ? _c("td", { staticClass: "bg-success" }, [
-                    _c("i", { staticClass: "fas fa-angle-right text-white" })
-                  ])
-                : operator.queue_id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _c("i", { staticClass: "fas fa-angle-right text-dark" })
-                  ])
-                : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
-              _vm._v(" "),
-              operator.queue_id == null
-                ? _c("td", { staticClass: "bg-success text-white" }, [
-                    _vm._v("Свободен")
-                  ])
-                : operator.queue_id == _vm.cookie.id
-                ? _c("td", { staticClass: "bg-warning" }, [
-                    _vm._v(
-                      _vm._s(_vm.getNameFromId(operator.queue_id)) +
-                        "\n            "
-                    )
-                  ])
-                : _c("td", [
-                    _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
-                  ])
-            ])
-          })
-        ],
-        2
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "modal fade",
-          attrs: {
-            id: "modalCallForm",
-            tabindex: "-1",
-            role: "dialog",
-            "aria-labelledby": "myModalLabel",
-            "aria-hidden": "true"
-          }
-        },
-        [
-          _c(
-            "div",
-            { staticClass: "modal-dialog", attrs: { role: "document" } },
-            [
-              _c("div", { staticClass: "modal-content" }, [
-                _vm._m(4),
-                _vm._v(" "),
-                _c("div", { staticClass: "modal-body" }, [
-                  _c("div", { staticClass: "form" }, [
-                    _c("div", { staticClass: "modal_input" }, [
-                      _c("label", { attrs: { for: "MsecName" } }, [
-                        _vm._v("Фамилия: ")
-                      ]),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.secondName,
-                            expression: "secondName"
-                          }
-                        ],
-                        attrs: {
-                          id: "MsecName",
-                          type: "text",
-                          placeholder: "Введите Фамилию",
-                          name: "secondName",
-                          required: ""
-                        },
-                        domProps: { value: _vm.secondName },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.secondName = $event.target.value
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "modal_input" }, [
-                      _c("label", { attrs: { for: "Mname" } }, [
-                        _vm._v("Имя: ")
-                      ]),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.name,
-                            expression: "name"
-                          }
-                        ],
-                        attrs: {
-                          id: "Mname",
-                          type: "text",
-                          placeholder: "Введите Имя",
-                          name: "name",
-                          required: ""
-                        },
-                        domProps: { value: _vm.name },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.name = $event.target.value
-                          }
-                        }
-                      })
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "modal_input" }, [
-                      _c("label", { attrs: { for: "Memail" } }, [
-                        _vm._v("E-MAIL: ")
-                      ]),
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.email,
-                            expression: "email"
-                          }
-                        ],
-                        attrs: {
-                          id: "Memail",
-                          type: "text",
-                          placeholder: "Введите E-mail",
-                          name: "email",
-                          required: ""
-                        },
-                        domProps: { value: _vm.email },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.email = $event.target.value
-                          }
-                        }
-                      })
+      _c("div", { staticClass: "col-md-4" }, [
+        _c(
+          "table",
+          { staticClass: "kezek" },
+          [
+            _vm._m(0),
+            _vm._v(" "),
+            _vm._m(1),
+            _vm._v(" "),
+            _vm._l(_vm.queues, function(queue, key) {
+              return _c("tr", [
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(_vm._s(key + 1))
                     ])
-                  ])
-                ]),
+                  : _c("td", [_vm._v(_vm._s(key + 1))]),
                 _vm._v(" "),
-                _c("div", { staticClass: "modal-footer" }, [
-                  _vm.is_loader
-                    ? _c(
-                        "div",
-                        {
-                          staticClass: "spinner-grow text-danger",
-                          attrs: { role: "status" }
-                        },
-                        [
-                          _c("span", { staticClass: "sr-only" }, [
-                            _vm._v("Загрузка...")
-                          ])
-                        ]
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _c("i", { staticClass: "fas fa-angle-right text-dark" })
+                    ])
+                  : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
+                _vm._v(" "),
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(_vm._s(queue.key))
+                    ])
+                  : _c("td", [_vm._v(_vm._s(queue.key))])
+              ])
+            })
+          ],
+          2
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c(
+          "table",
+          { staticClass: "kezek" },
+          [
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3),
+            _vm._v(" "),
+            _vm._l(_vm.operators, function(operator) {
+              return _c("tr", [
+                operator.queue_id == null
+                  ? _c("td", { staticClass: "bg-success text-white" }, [
+                      _vm._v(_vm._s(operator.name))
+                    ])
+                  : operator.queue_id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(_vm._s(operator.name) + "\n              ")
+                    ])
+                  : _c("td", [_vm._v(_vm._s(operator.name))]),
+                _vm._v(" "),
+                operator.queue_id == null
+                  ? _c("td", { staticClass: "bg-success" }, [
+                      _c("i", { staticClass: "fas fa-angle-right text-white" })
+                    ])
+                  : operator.queue_id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _c("i", { staticClass: "fas fa-angle-right text-dark" })
+                    ])
+                  : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
+                _vm._v(" "),
+                operator.queue_id == null
+                  ? _c("td", { staticClass: "bg-success text-white" }, [
+                      _vm._v("Свободен")
+                    ])
+                  : operator.queue_id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(
+                        _vm._s(_vm.getNameFromId(operator.queue_id)) +
+                          "\n              "
                       )
-                    : _vm._e(),
+                    ])
+                  : _c("td", [
+                      _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
+                    ])
+              ])
+            })
+          ],
+          2
+        )
+      ])
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "modalCallForm",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "myModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "modal-dialog", attrs: { role: "document" } },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(4),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "form" }, [
+                  _c("div", { staticClass: "modal_input" }, [
+                    _c("label", { attrs: { for: "Mname" } }, [
+                      _vm._v("Фамилия Имя: ")
+                    ]),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.name,
+                          expression: "name"
+                        }
+                      ],
+                      attrs: {
+                        id: "Mname",
+                        type: "text",
+                        placeholder: "Введите Имя",
+                        name: "name",
+                        required: ""
+                      },
+                      domProps: { value: _vm.name },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.name = $event.target.value
+                        }
+                      }
+                    })
+                  ]),
                   _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-secondary",
-                      staticStyle: { width: "30%" },
-                      attrs: { type: "button", "data-dismiss": "modal" }
-                    },
-                    [_vm._v("Отмена")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary",
-                      staticStyle: { width: "30%" },
-                      attrs: { disabled: _vm.is_loader, type: "button" },
-                      on: { click: _vm.modalCallForm }
-                    },
-                    [_vm._v("В очередь")]
-                  )
-                ]),
+                  _c("div", { staticClass: "modal_input" }, [
+                    _c("label", { attrs: { for: "Memail" } }, [
+                      _vm._v("E-MAIL: ")
+                    ]),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.email,
+                          expression: "email"
+                        }
+                      ],
+                      attrs: {
+                        id: "Memail",
+                        type: "text",
+                        placeholder: "Введите E-mail",
+                        name: "email",
+                        required: ""
+                      },
+                      domProps: { value: _vm.email },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.email = $event.target.value
+                        }
+                      }
+                    })
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _vm.is_loader
+                  ? _c(
+                      "div",
+                      {
+                        staticClass: "spinner-grow text-danger",
+                        attrs: { role: "status" }
+                      },
+                      [
+                        _c("span", { staticClass: "sr-only" }, [
+                          _vm._v("Загрузка...")
+                        ])
+                      ]
+                    )
+                  : _vm._e(),
                 _vm._v(" "),
-                _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn butt",
+                    staticStyle: { width: "30%" },
+                    attrs: { type: "button", "data-dismiss": "modal" }
+                  },
+                  [_vm._v("Отмена")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn butt",
+                    staticStyle: { width: "30%" },
+                    attrs: { disabled: _vm.is_loader, type: "button" },
+                    on: { click: _vm.modalCallForm }
+                  },
+                  [_vm._v("В очередь")]
+                )
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                [
                   _vm.is_confirm
                     ? _c(
                         "h5",
@@ -82691,25 +82690,30 @@ var render = function() {
                       )
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.is_error
-                    ? _c(
-                        "h5",
-                        {
-                          staticClass:
-                            "text-center border-bottom border-danger m-0 p-0"
-                        },
-                        [_vm._v("Необработанная ошибка")]
-                      )
-                    : _vm._e()
-                ])
-              ])
-            ]
-          )
-        ]
-      ),
-      _vm._v(" "),
-      _vm._m(5)
-    ])
+                  _vm._l(_vm.is_error_arr, function(err) {
+                    return _vm.is_error
+                      ? _c("div", [
+                          _c(
+                            "h5",
+                            {
+                              staticClass:
+                                "text-center border-bottom border-danger m-1 p-1"
+                            },
+                            [_vm._v(_vm._s(err[0]))]
+                          )
+                        ])
+                      : _vm._e()
+                  })
+                ],
+                2
+              )
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _vm._m(5)
   ])
 }
 var staticRenderFns = [

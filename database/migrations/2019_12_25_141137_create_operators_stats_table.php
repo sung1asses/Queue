@@ -17,7 +17,6 @@ class CreateOperatorsStatsTable extends Migration
             $table->increments('id');
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('queue_list_id')->index();
-            $table->integer('queues_count')->default(0);
 
             $table->dateTime('started_at');
             $table->dateTime('ended_at')->nullable();

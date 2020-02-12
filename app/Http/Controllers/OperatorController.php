@@ -43,7 +43,6 @@ class OperatorController extends Controller
 
             $QueuesStat = QueuesStat::create([ // записываем в историю очередь
                 'name' => $queue->name,
-                'secondName' => $queue->secondName,
                 'email' => $queue->email,
                 'key' => $queue->key,
                 'user_id' => Auth::id(),
@@ -77,10 +76,6 @@ class OperatorController extends Controller
                 User::find(Auth::id())->update([
                     'queue_id' => $queue[count($all_operators)-count($active_operators)]->id,
                 ]);//обновляем оператора, который обрабатывал заявку(мы)
-
-                $stat = OperatorsStat::where([['user_id',Auth::id()],['queue_list_id',$id],['ended_at',null]])->first();
-                $stat->queues_count = $stat->queues_count+1;
-                $stat->save();
                 
                 $all_operators = Role::where('group', 'operator')->first()->users()->where([['queue_list_id', $id],['status', 1]])->get();//Выбираем всех операторов, обслуживаюищих очередь
 
@@ -117,7 +112,6 @@ class OperatorController extends Controller
                 OperatorsStat::create([
                     'user_id' => Auth::id(),
                     'queue_list_id' => $id,
-                    'queues_count' => 1,
                     'started_at' => Carbon::now('Asia/Almaty'),
                 ]);
             }
@@ -130,7 +124,6 @@ class OperatorController extends Controller
                 OperatorsStat::create([
                     'user_id' => Auth::id(),
                     'queue_list_id' => $id,
-                    'queues_count' => 0,
                     'started_at' => Carbon::now('Asia/Almaty'),
                 ]);
             }

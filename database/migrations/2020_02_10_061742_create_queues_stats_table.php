@@ -16,7 +16,6 @@ class CreateQueuesStatsTable extends Migration
         Schema::create('queues_stats', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('secondName');
             $table->string('email');
             $table->integer('key');
             $table->string('status')->default('Посетил');

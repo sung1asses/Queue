@@ -16,7 +16,6 @@ class CreateQueuesTable extends Migration
         Schema::create('queues', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->string('secondName');
             $table->string('email');
             $table->integer('key');
             $table->integer('queue_list_id');

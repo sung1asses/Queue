@@ -37,7 +37,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
       Route::get('/operator/{id}', 'AdminController@showOperator')->name('admin.operator.show');
 
       // statistic
-      Route::post('/stat', 'AdminStatController@historyStat');
+      Route::post('/stat', 'AdminStatController@operatorStat');
   	});
     Route::middleware(['isOperator'])->prefix('operator-level')->group(function () {
 
