@@ -2057,13 +2057,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['queues_json', 'operators_json', 'id', 'queue_name_json'],
+  props: ['queues_json', 'operators_json', 'id', 'queue_name'],
   data: function data() {
     return {
       operator_queues: JSON.parse(this.queues_json).splice(0, JSON.parse(this.operators_json).length),
       queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
-      operators: JSON.parse(this.operators_json),
-      queue_name: JSON.parse(this.queue_name_json)
+      operators: JSON.parse(this.operators_json)
     };
   },
   mounted: function mounted() {
@@ -82002,7 +82001,7 @@ var render = function() {
     _c("div", { staticClass: "col-md-6" }, [
       _c("div", { staticClass: "card my-4" }, [
         _c("div", { staticClass: "card-header text-center" }, [
-          _vm._v("Очередь: " + _vm._s(_vm.queue_name.name))
+          _vm._v("Очередь: " + _vm._s(_vm.queue_name))
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "card-body p-0" }, [
@@ -82471,41 +82470,6 @@ var render = function() {
             _vm._v(" "),
             _vm._m(1),
             _vm._v(" "),
-            _vm._l(_vm.queues, function(queue, key) {
-              return _c("tr", [
-                queue.id == _vm.cookie.id
-                  ? _c("td", { staticClass: "bg-warning" }, [
-                      _vm._v(_vm._s(key + 1))
-                    ])
-                  : _c("td", [_vm._v(_vm._s(key + 1))]),
-                _vm._v(" "),
-                queue.id == _vm.cookie.id
-                  ? _c("td", { staticClass: "bg-warning" }, [
-                      _c("i", { staticClass: "fas fa-angle-right text-dark" })
-                    ])
-                  : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
-                _vm._v(" "),
-                queue.id == _vm.cookie.id
-                  ? _c("td", { staticClass: "bg-warning" }, [
-                      _vm._v(_vm._s(queue.key))
-                    ])
-                  : _c("td", [_vm._v(_vm._s(queue.key))])
-              ])
-            })
-          ],
-          2
-        )
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-md-4" }, [
-        _c(
-          "table",
-          { staticClass: "kezek" },
-          [
-            _vm._m(2),
-            _vm._v(" "),
-            _vm._m(3),
-            _vm._v(" "),
             _vm._l(_vm.operators, function(operator) {
               return _c("tr", [
                 operator.queue_id == null
@@ -82542,6 +82506,41 @@ var render = function() {
                   : _c("td", [
                       _vm._v(_vm._s(_vm.getNameFromId(operator.queue_id)))
                     ])
+              ])
+            })
+          ],
+          2
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c(
+          "table",
+          { staticClass: "kezek" },
+          [
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3),
+            _vm._v(" "),
+            _vm._l(_vm.queues, function(queue, key) {
+              return _c("tr", [
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(_vm._s(key + 1))
+                    ])
+                  : _c("td", [_vm._v(_vm._s(key + 1))]),
+                _vm._v(" "),
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _c("i", { staticClass: "fas fa-angle-right text-dark" })
+                    ])
+                  : _c("td", [_c("i", { staticClass: "fas fa-angle-right" })]),
+                _vm._v(" "),
+                queue.id == _vm.cookie.id
+                  ? _c("td", { staticClass: "bg-warning" }, [
+                      _vm._v(_vm._s(queue.key))
+                    ])
+                  : _c("td", [_vm._v(_vm._s(queue.key))])
               ])
             })
           ],
@@ -82723,7 +82722,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("tr", [
       _c("th", { staticClass: "kezek_btn", attrs: { colspan: "3" } }, [
-        _vm._v("Список очередей")
+        _vm._v("Список операторов")
       ])
     ])
   },
@@ -82732,7 +82731,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("th", [_vm._v("Очередь")]),
+      _c("th", [_vm._v("Оператор")]),
       _vm._v(" "),
       _c("th", [_c("i", { staticClass: "fas fa-angle-right" })]),
       _vm._v(" "),
@@ -82745,7 +82744,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("tr", [
       _c("th", { staticClass: "kezek_btn", attrs: { colspan: "3" } }, [
-        _vm._v("Список опеаторов")
+        _vm._v("Список очередей")
       ])
     ])
   },
@@ -82754,7 +82753,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("tr", [
-      _c("th", [_vm._v("Операторы")]),
+      _c("th", [_vm._v("Очередь")]),
       _vm._v(" "),
       _c("th", [_c("i", { staticClass: "fas fa-angle-right" })]),
       _vm._v(" "),

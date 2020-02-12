@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Eq aues')
 
 @section('content_header')
     <h1>Управление очередью</h1>

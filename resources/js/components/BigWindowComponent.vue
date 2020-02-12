@@ -2,7 +2,7 @@
 <div class="row justify-content-center">
   <div class="col-md-6">
     <div class="card my-4">
-      <div class="card-header text-center">Очередь: {{ queue_name.name }}</div>
+      <div class="card-header text-center">Очередь: {{ queue_name }}</div>
       <div class="card-body p-0">
         <div class="row">
           <div class="col">
@@ -57,13 +57,12 @@
 
 <script>
 	export default {
-        props: ['queues_json','operators_json','id', 'queue_name_json'],
+        props: ['queues_json','operators_json','id', 'queue_name'],
         data:function(){
             return{
                 operator_queues: JSON.parse(this.queues_json).splice(0,JSON.parse(this.operators_json).length),
                 queues: JSON.parse(this.queues_json).splice(JSON.parse(this.operators_json).length),
                 operators: JSON.parse(this.operators_json),
-                queue_name: JSON.parse(this.queue_name_json),
             }
         },
         mounted() {

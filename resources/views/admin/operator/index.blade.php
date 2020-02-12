@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Eq aues')
 
 @section('content_header')
     <h1>Работа с операторами</h1>
@@ -17,20 +17,24 @@
               <div class="card-body">
                 {{ csrf_field() }}
                     <div class="form-group">
-                       <label for="name" class="col-md-5 col-form-label text-md-right">{{ __('Фамилия оператора') }}</label>
-                       <input type="text" min="0" class="form-control" value="{{ old('sname') }}" name="sname" required="">
+                       <label for="sname" class="col-md-5 col-form-label text-md-right">{{ __('Фамилия оператора') }}</label>
+                       <input id="sname" type="text" min="0" class="form-control" value="{{ old('sname') }}" name="sname" required="">
                     </div>
                     <div class="form-group">
-                       <label for="name" class="col-md-5 col-form-label text-md-right">{{ __('Имя оператора') }}</label>
-                       <input type="text" min="0" class="form-control" value="{{ old('fname') }}" name="fname" required="">
+                       <label for="fname" class="col-md-5 col-form-label text-md-right">{{ __('Имя оператора') }}</label>
+                       <input id="fname" type="text" min="0" class="form-control" value="{{ old('fname') }}" name="fname" required="">
                     </div>
                     <div class="form-group">
-                       <label for="name" class="col-md-5 col-form-label text-md-right">{{ __('Введите пароль') }}</label>
-                       <input type="password" min="8" class="form-control" value="{{ old('pass') }}" name="password" required="">
+                       <label for="email" class="col-md-5 col-form-label text-md-right">{{ __('Почта оператора') }}</label>
+                       <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
                     </div>
                     <div class="form-group">
-                       <label for="name" class="col-md-5 col-form-label text-md-right">{{ __('Повторите пароль') }}</label>
-                       <input type="password" min="8" class="form-control" value="{{ old('password_confirmation') }}" name="password_confirmation" required="">
+                       <label for="password" class="col-md-5 col-form-label text-md-right">{{ __('Введите пароль') }}</label>
+                       <input id="password" type="password" min="8" class="form-control" value="{{ old('pass') }}" name="password" required="">
+                    </div>
+                    <div class="form-group">
+                       <label for="password_confirmation" class="col-md-5 col-form-label text-md-right">{{ __('Повторите пароль') }}</label>
+                       <input id="password_confirmation" type="password" min="8" class="form-control" value="{{ old('password_confirmation') }}" name="password_confirmation" required="">
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Отправить</button>

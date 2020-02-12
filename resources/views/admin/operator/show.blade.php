@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Eq aues')
 
 @section('content_header')
     <h1>{{ $operator->name }}</h1>
@@ -25,7 +25,21 @@
               <h3 class="card-title">Список активных очередей</h3>
             </div>
             <div class="card-body">
-            @foreach($queue_list as $queue)
+            @foreach($queue_list_active as $queue)
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ route('admin.queue.show',['id'=> $queue->id]) }}">
+                  {{ $queue->name }}
+                </a>
+              </div>
+            @endforeach
+            </div>
+        </div>
+        <div class="card card-primary">
+            <div class="card-header with-border">
+              <h3 class="card-title">Список пассивных очередей</h3>
+            </div>
+            <div class="card-body">
+            @foreach($queue_list_passive as $queue)
               <div class="d-flex justify-content-between align-items-center">
                 <a href="{{ route('admin.queue.show',['id'=> $queue->id]) }}">
                   {{ $queue->name }}

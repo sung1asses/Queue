@@ -17,9 +17,7 @@ class CreateQueueListsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('fromDate');
-            $table->integer('job1')->nullable();
             $table->string('toDate');
-            $table->integer('job2')->nullable();
             $table->tinyinteger('status')->default(0);
             $table->timestamps();
         });

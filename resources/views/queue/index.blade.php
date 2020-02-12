@@ -2,15 +2,19 @@
 
 @section('content')
 <!--список-->
-<ol type="1" class="queue">
-    <h1>Онлайн очередь</h1>
+<div class="container">
+	<div class="row">
+		<div class="col queue">
+		    <h1>Онлайн очередь</h1>
+			@foreach($queue_list as $queue)
+	        <a class="p-2 w-100 d-flex justify-content-between" style="border-bottom: 1px solid #ccc;" href="{{ route('queue.show',['id'=> $queue->id]) }}">
+	          <span>{{ $queue->name }}</span> <button class="p-2">Перейти</button>
+	        </a>
+		    @endforeach
+		</div>
+	</div>
+</div>
 
-    @foreach($queue_list as $queue)
-      <li>
-        <a href="{{ route('queue.show',['id'=> $queue->id]) }}">
-          {{ $queue->name }} <button>Перейти</button>
-        </a>
-      </li>
-    @endforeach
+    
 </ol>
 @endsection

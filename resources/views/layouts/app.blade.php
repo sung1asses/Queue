@@ -28,7 +28,11 @@
 </head>
 <body>
     <div id="app">
-        <img src="{{ asset('icon/aues_logo.png') }}" alt="логотоп ауэс" class="logo"><hr>
+    <nav class="navbar navbar-light bg-light border-bottom mb-3">
+      <a class="navbar-brand" href="{{ route('queue.list') }}">
+        <img src="{{ asset('icon/aues_logo.png') }}" alt="логотоп ауэс" width="150">
+      </a>
+    </nav>
 
         @yield('content')
 

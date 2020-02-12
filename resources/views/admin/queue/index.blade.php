@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Eq aues')
 
 @section('content_header')
     <h1>Работа с очередями</h1>
@@ -25,7 +25,7 @@
                        <input type="date" min="0" class="form-control" value="{{ old('fromDate') }}" name="fromDate" required="">
                     </div>
                     <div class="form-group">
-                       <label for="toDate" class="col-md-5 col-form-label text-md-right">{{ __('Дата открытия очереди') }}</label>
+                       <label for="toDate" class="col-md-5 col-form-label text-md-right">{{ __('Дата закрытия очереди') }}</label>
                        <input type="date" min="0" class="form-control" value="{{ old('toDate') }}" name="toDate" required="">
                     </div>
                     <div class="card-footer">
@@ -61,8 +61,9 @@
             <div class="card-body">
             @foreach($queue_list_potencially as $queue)
               <div class="d-flex justify-content-between align-items-center">
-                <p>{{ $queue->name }}</p>
-                <p>{{ $queue->fromDate }}</p>
+                <a href="{{ route('admin.queue.show',['id'=> $queue->id]) }}">
+                  {{ $queue->name }}. Дата начала: {{ $queue->fromDate }}
+                </a>
                 <a href="{{ route('admin.queue.delete',['id'=> $queue->id]) }}">
                   {{ __('Удалить') }}
                 </a>

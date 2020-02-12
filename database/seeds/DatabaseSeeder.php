@@ -30,26 +30,9 @@ class DatabaseSeeder extends Seeder
 	        'description' => 'Operate queues.', // optional
 	        'group' => 'operator' // optional, set as 'default' by default
 	    ]);
-
-        \App\User::create([
-	        'name' => 'Suvorov Roman',
-	        'email' => 'suvorov_roman@queue.operator',
-	        'password' => Illuminate\Support\Facades\Hash::make('operator'),
-	    ])->attachRole($operatorRole);
-
-        \App\User::create([
-	        'name' => 'Semenov Pavel',
-	        'email' => 'semenov_pavel@queue.operator',
-	        'password' => Illuminate\Support\Facades\Hash::make('operator'),
-	    ])->attachRole($operatorRole);
-	    
-        \App\User::create([
-	        'name' => 'Saptova Tomiris',
-	        'email' => 'saptova_tomiris@queue.operator',
-	        'password' => Illuminate\Support\Facades\Hash::make('operator'),
-	    ])->attachRole($operatorRole);
 	    
         $this->call([
+        	OperatorSeeder::class,
 	        QueueSeeder::class,
 	    ]);
     }

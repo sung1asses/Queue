@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', 'Eq aues')
 
 @section('content_header')
-    <h1>Работа с операторами</h1>
+    <h1>Очереди</h1>
 @endsection
 
 @section('content')

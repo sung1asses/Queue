@@ -15,31 +15,10 @@
     <div class="col-md-4">
       <table class="kezek">
           <tr>
-              <th colspan="3" class="kezek_btn">Список очередей</th>
+              <th colspan="3" class="kezek_btn">Список операторов</th>
           </tr>
           <tr>
-              <th>Очередь</th>
-              <th><i class="fas fa-angle-right"></i></th>
-              <th>Талон</th>
-          </tr>
-          <tr v-for="(queue, key) in queues">
-            <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
-            <td v-else>{{ key+1 }}</td>
-                <td v-if="queue.id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i></td>
-                <td v-else><i class="fas fa-angle-right"></i></td>
-            <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
-            <td v-else>{{ queue.key }}</td>
-          </tr>
-        
-      </table>
-    </div>
-    <div class="col-md-4">
-      <table class="kezek">
-          <tr>
-              <th colspan="3" class="kezek_btn">Список опеаторов</th>
-          </tr>
-          <tr>
-              <th>Операторы</th>
+              <th>Оператор</th>
               <th><i class="fas fa-angle-right"></i></th>
               <th>Талон</th>
           </tr>
@@ -56,6 +35,27 @@
               <td v-else-if="operator.queue_id==cookie.id" class="bg-warning">{{ getNameFromId(operator.queue_id) }}
               <td v-else>{{ getNameFromId(operator.queue_id) }}</td></td>
           </tr>
+      </table>
+    </div>
+    <div class="col-md-4">
+      <table class="kezek">
+          <tr>
+              <th colspan="3" class="kezek_btn">Список очередей</th>
+          </tr>
+          <tr>
+              <th>Очередь</th>
+              <th><i class="fas fa-angle-right"></i></th>
+              <th>Талон</th>
+          </tr>
+          <tr v-for="(queue, key) in queues">
+            <td v-if="queue.id==cookie.id" class="bg-warning">{{ key+1 }}</td>
+            <td v-else>{{ key+1 }}</td>
+                <td v-if="queue.id==cookie.id" class="bg-warning"><i class="fas fa-angle-right text-dark"></i></td>
+                <td v-else><i class="fas fa-angle-right"></i></td>
+            <td v-if="queue.id==cookie.id" class="bg-warning">{{ queue.key }}</td>
+            <td v-else>{{ queue.key }}</td>
+          </tr>
+        
       </table>
     </div>
         <!-- Modal -->

@@ -1,5 +1,5 @@
 @component('mail::message')
-# Вы всталь в очередь: {{ $queue_list->name }}
+# Вы встали в очередь: {{ $queue_list->name }}
 
 Фамилия Имя, которое вы указали: {{ $request->name }} .<br>
 <h3>Ваш номерок: <b>{{ $request->key }}</b></h3><br>

@@ -23,7 +23,7 @@ class QueueSeeder extends Seeder
     	$queue_list->users()->attach(2);
 
         
-        $faker = Faker\Factory::create();
+        $faker = Faker\Factory::create("ru_RU");
 
         $data = [];
         for ($i = 0; $i <= 30; $i++) {

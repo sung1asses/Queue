@@ -51,15 +51,14 @@ class AdminController extends Controller
         ]);
 
         $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 1))->delay(Carbon::createFromFormat('Y-m-d', $queue->fromDate,'Asia/Almaty'));
-        $jobId1 = app(Dispatcher::class)->dispatch($job);
+        app(Dispatcher::class)->dispatch($job);
         
         $job = (new \App\Jobs\UpdateQueueStatus($queue->id, 2))->delay(Carbon::createFromFormat('Y-m-d', $queue->toDate,'Asia/Almaty'));
-        $jobId2 = app(Dispatcher::class)->dispatch($job);
+        app(Dispatcher::class)->dispatch($job);
 
-        $queue->update([
-            'job1' => $jobId1,
-            'job2' => $jobId2,
-        ]);
+        $job = (new \App\Jobs\SendOperatorNotification($queue->id))->delay(Carbon::createFromFormat('Y-m-d', $queue->fromDate,'Asia/Almaty')->subDays(2));
+
+        app(Dispatcher::class)->dispatch($job);
 
     	return redirect()->route('admin.queue.list')
 		    	->with('succ', 'Очередь успешно создана...');
@@ -74,14 +73,14 @@ class AdminController extends Controller
     
     public function showQueue($id)
     {
-        if(!QueueList::find($id) || QueueList::find($id)->status != 1){
+        if(!QueueList::find($id) || QueueList::find($id)->status == 2){
             return abort(404);
         }
 
     	$queue = QueueList::find($id)->queues()->limit(30)->get();
         $operators = Role::where('group', 'operator')->first()->users()->get();
         $active_operators = QueueList::find($id)->users()->get();
-        $queue_name = QueueList::select('name')->find($id);
+        $queue_name = QueueList::select('name')->find($id)->name;
         $queue_operators = Role::where('group', 'operator')->first()->users()->where([['queue_list_id', $id],['status', 1]])->get();//Выбираем всех операторов, обслуживаюищих очередь
     	return view('admin.queue.show', compact('queue','id', 'operators', 'active_operators', 'queue_name','queue_operators'));
     }
@@ -111,6 +110,7 @@ class AdminController extends Controller
         $validation = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'sname' => ['required', 'string', 'max:255'],
             'fname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -121,14 +121,13 @@ class AdminController extends Controller
         };
 
         $name = ucfirst($request['sname'])." ".ucfirst($request['fname']);
-        $email = strtolower($request['sname'])."_".strtolower($request['fname'])."@queue.operator";
-        if(!User::where("email",$email)->first()){
-            User::create([
-                'name' => $name,
-                'email' => $email,
-                'password' => \Illuminate\Support\Facades\Hash::make($request['password']),
-            ])->attachRole(Role::where('group', 'operator')->first());
-        }
+        $email = strtolower($request['email']);
+        User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request['password']),
+        ])->attachRole(Role::where('group', 'operator')->first());
+
         $operators = Role::where('group', 'operator')->first()->users()->get();
         return view('admin.operator.index', compact('operators'));
     }
@@ -141,7 +140,8 @@ class AdminController extends Controller
     public function showOperator($id)
     {
         $operator = User::find($id);
-        $queue_list = User::find($id)->queueLists()->get();
-        return view('admin.operator.show', compact('queue_list','operator'));
+        $queue_list_active = User::find($id)->queueLists()->where("status", 1)->get();
+        $queue_list_passive = User::find($id)->queueLists()->where("status", 0)->get();
+        return view('admin.operator.show', compact('operator','queue_list_active','queue_list_passive'));
     }
 }

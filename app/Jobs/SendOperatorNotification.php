@@ -8,7 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateQueueStatus implements ShouldQueue
+class SendOperatorNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -17,12 +17,10 @@ class UpdateQueueStatus implements ShouldQueue
      *
      * @return void
      */
-    public $id;
-    public $status=0;
-    public function __construct($id, $status)
+    public $queue_list_id;
+    public function __construct($queue_list_id)
     {
-        $this->id = $id;
-        $this->status = $status;
+        $this->queue_list_id = $queue_list_id;
     }
 
     /**
@@ -32,10 +30,13 @@ class UpdateQueueStatus implements ShouldQueue
      */
     public function handle()
     {
-        $queue_list = \App\QueueList::find($this->id);
-        if(!$queue_list)return false;
-        $queue_list->update([
-            'status' => $this->status,
-        ]);
+        $queue_list = \App\QueueList::find($this->queue_list_id);
+        if(!$queue_list) return false;
+        $email = new \App\Mail\OperatorNotification($queue_list);
+
+        $users = $queue_list->users()->get();
+        foreach ($users as $user) {
+            \Mail::to($user->email)->send($email);
+        }
     }
 }

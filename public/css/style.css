@@ -15,29 +15,15 @@ h1 {
     padding: 1%;
     text-transform: uppercase;
 }
-.queue {
-    width: 50%;
-    margin: 2% auto;
-}
-.queue li {
-    border-bottom: 1px solid #ccc;
-    padding: 2% 0;
-    margin: .5%;
-    position: relative;
-}
-.queue li a {
+.queue a {
     text-decoration: none;
     font-size: 1.2em;
     color: #000;
 }
-.queue li button {
-    position: absolute;
-    right: 0;
-    top: 0;
+.queue button {
     background: #2d496e;
     color: #fff;
     font-size: .8em;
-    padding: 1.6% 4%;
     border: none;
     text-transform: uppercase;
 }
