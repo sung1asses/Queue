@@ -15,7 +15,7 @@ class SendYouAreFired implements ShouldQueue
     public $request;
     public $queue_name;
     
-    public function __construct($request ,$queue_name)
+    public function __construct($request, $queue_name)
     {
         $this->request = $request;
         $this->queue_name = $queue_name;

@@ -31,8 +31,7 @@ class RemainingTreePeople extends Mailable
      */
     public function build()
     {
-        return $this->from('laravel@example.com')
-                    ->subject('Не пропустите свою очередь!')
+        return $this->subject('Не пропустите свою очередь!')
                     ->markdown('emails.remaining_tree',[ 'request' => $this->request, 'queue_name' => $this->queue_name]);
     }
 }

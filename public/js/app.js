@@ -2056,6 +2056,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['queues_json', 'operators_json', 'id', 'queue_name'],
   data: function data() {
@@ -82012,8 +82014,12 @@ var render = function() {
                 _vm._v(" "),
                 _c(
                   "tbody",
-                  _vm._l(_vm.queues, function(queue) {
-                    return _c("tr", [_c("td", [_vm._v(_vm._s(queue.key))])])
+                  _vm._l(_vm.queues, function(queue, key) {
+                    return _c("tr", [
+                      _c("td", [_vm._v(_vm._s(key + 1))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(queue.key))])
+                    ])
                   }),
                   0
                 )
@@ -82072,7 +82078,9 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", { staticClass: "text-center" }, [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Ключ")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Очередь")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Талон")])
       ])
     ])
   },

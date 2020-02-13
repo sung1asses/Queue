@@ -3,9 +3,9 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class YouAreFired extends Mailable
 {
@@ -30,8 +30,7 @@ class YouAreFired extends Mailable
      */
     public function build()
     {
-        return $this->from('laravel@example.com')
-                    ->subject('Увы, но вы пропустили свою очередь!')
-                    ->markdown('emails.fired',['queue_name' => $this->queue_name ]);
+        return $this->subject('Увы, но вы пропустили свою очередь!')
+                    ->markdown('emails.you_are_fired',['queue_name' => $this->queue_name ]);
     }
 }

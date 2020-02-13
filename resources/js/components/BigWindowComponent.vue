@@ -10,11 +10,13 @@
             <table class="table table-striped mb-0">
               <thead>
                 <tr class="text-center">
-                  <th scope="col">Ключ</th>
+                  <th scope="col">Очередь</th>
+                  <th scope="col">Талон</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="queue in queues">
+                <tr v-for="(queue, key) in queues">
+                  <td>{{ key+1 }}</td>
                   <td>{{ queue.key }}</td>
                 </tr>
               </tbody>

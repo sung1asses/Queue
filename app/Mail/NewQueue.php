@@ -34,8 +34,7 @@ class NewQueue extends Mailable
      */
     public function build()
     {
-        return $this->from('laravel@example.com')
-                    ->subject('Вы встали в очередь!')
+        return $this->subject('Вы встали в очередь!')
                     ->markdown('emails.new_queue',[ 'request' => $this->request, 'queue_list' => $this->queue_list, 'encrypted_key' => $this->encrypted_key]);
     }
 }
