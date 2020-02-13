@@ -10,17 +10,17 @@
     	margin-bottom: 3%;
     }
     .queue li a {
-        font-size: 1.5em;
+        font-size: 1.2em;
     }
     .queue li a button {
     	display: none;
     }
     .inline .kezek, .inline button  {
         width: 100%;
-        font-size: 1.6em;
+        font-size: 1.2em;
     }
     form {
-        font-size: 2.6em;
+        font-size: 1.6em;
     }
     .btn {
         width: 100%!important;
@@ -38,13 +38,17 @@
     	margin-bottom: 3%;
     }
     .butt {
-    	font-size: 2em!important;
+    	font-size: 1.2em!important;
     }
     .modal-dialog {
     	max-width: 90%!important;
     }
     .modal_input {
         margin-bottom: 4%;
+    }
+    .modal_input label{
+        width: 100%;
+        text-align: left;
     }
     .modal-footer {
         flex-wrap: inherit!important;
