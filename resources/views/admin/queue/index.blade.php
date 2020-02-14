@@ -18,15 +18,24 @@
                 {{ csrf_field() }}
                     <div class="form-group">
                        <label for="name" class="col-md-5 col-form-label text-md-right">{{ __('Название очереди') }}</label>
-                       <input type="text" min="0" class="form-control" value="{{ old('name') }}" name="name" required="">
+                       <input type="text" class="form-control" value="{{ old('name') }}" name="name" required="">
+                      @error('name')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="fromDate" class="col-md-5 col-form-label text-md-right">{{ __('Дата открытия очереди') }}</label>
-                       <input type="date" min="0" class="form-control" value="{{ old('fromDate') }}" name="fromDate" required="">
+                       <input type="date" class="form-control" value="{{ old('fromDate') }}" name="fromDate" required="">
+                      @error('fromDate')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="toDate" class="col-md-5 col-form-label text-md-right">{{ __('Дата закрытия очереди') }}</label>
-                       <input type="date" min="0" class="form-control" value="{{ old('toDate') }}" name="toDate" required="">
+                       <input type="date" class="form-control" value="{{ old('toDate') }}" name="toDate" required="">
+                      @error('toDate')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Отправить</button>

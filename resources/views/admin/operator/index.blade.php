@@ -19,23 +19,38 @@
                     <div class="form-group">
                        <label for="sname" class="col-md-5 col-form-label text-md-right">{{ __('Фамилия оператора') }}</label>
                        <input id="sname" type="text" min="0" class="form-control" value="{{ old('sname') }}" name="sname" required="">
+                      @error('sname')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="fname" class="col-md-5 col-form-label text-md-right">{{ __('Имя оператора') }}</label>
                        <input id="fname" type="text" min="0" class="form-control" value="{{ old('fname') }}" name="fname" required="">
+                      @error('fname')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="email" class="col-md-5 col-form-label text-md-right">{{ __('Почта оператора') }}</label>
                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                      @error('email')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="password" class="col-md-5 col-form-label text-md-right">{{ __('Введите пароль') }}</label>
                        <input id="password" type="password" min="8" class="form-control" value="{{ old('pass') }}" name="password" required="">
+                      @error('password')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     </div>
                     <div class="form-group">
                        <label for="password_confirmation" class="col-md-5 col-form-label text-md-right">{{ __('Повторите пароль') }}</label>
                        <input id="password_confirmation" type="password" min="8" class="form-control" value="{{ old('password_confirmation') }}" name="password_confirmation" required="">
                     </div>
+                      @error('password_confirmation')
+                          <div class="text-danger p-2">{{ $message }}</div>
+                      @enderror
                     <div class="card-footer">
                         <button type="submit" class="btn btn-primary">Отправить</button>
                     </div>

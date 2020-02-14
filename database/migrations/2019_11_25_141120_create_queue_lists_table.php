@@ -15,7 +15,7 @@ class CreateQueueListsTable extends Migration
     {
         Schema::create('queue_lists', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('fromDate');
             $table->string('toDate');
             $table->tinyinteger('status')->default(0);

@@ -33,7 +33,7 @@ class AdminController extends Controller
     public function createQueue(Request $request)
     {
         $validation = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => ['required', 'string', 'max:255', 'unique:queue_lists'],
             'fromDate' => 'required',
             'toDate' => 'required',
         ]);
@@ -41,7 +41,7 @@ class AdminController extends Controller
         if($validation->fails()) {
             return redirect()->route('admin.queue.list')
 		                ->withInput()
-		                ->with('error', 'Вы ввели не все поля...');
+		                ->withErrors($validation);
         };
 
         $queue = QueueList::create([
@@ -117,7 +117,7 @@ class AdminController extends Controller
         if($validation->fails()) {
             return redirect()->route('admin.operator.list')
                         ->withInput()
-                        ->with('error', 'Ошибка ввода');
+                        ->withErrors($validation);
         };
 
         $name = ucfirst($request['sname'])." ".ucfirst($request['fname']);
@@ -127,6 +127,9 @@ class AdminController extends Controller
             'email' => $email,
             'password' => \Illuminate\Support\Facades\Hash::make($request['password']),
         ])->attachRole(Role::where('group', 'operator')->first());
+
+        $email = new \App\Mail\CreateOperatorNotification($request); //Отправляем сообщение о пропуске заявки
+        \Mail::to($request->email)->send($email);//КОСТЫЛЬ!
 
         $operators = Role::where('group', 'operator')->first()->users()->get();
         return view('admin.operator.index', compact('operators'));

@@ -19,7 +19,7 @@ Auth::routes([
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
-	Route::get('/', 'AdminController@home');
+	Route::get('/', 'AdminController@home')->name("admin.home");
 	
 	Route::middleware(['isAdmin'])->group(function () {
 
