@@ -50,13 +50,8 @@
 </template>
 
 <script>
-    import LineChart from './LineChart.js'
-
     export default {
         props:['user_id'],
-        // components: {
-        //     LineChart
-        // },
         data:function(){
             return{
                 errors: [],

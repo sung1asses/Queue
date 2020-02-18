@@ -20,12 +20,10 @@ window.Vue = require('vue');
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('admin-buttons-component', require('./components/AdminButtonsComponent.vue').default);
-Vue.component('history-component', require('./components/HistoryComponent.vue').default);
-Vue.component('set-queue-component', require('./components/SetQueueComponent.vue').default);
 Vue.component('big-window-component', require('./components/BigWindowComponent.vue').default);
-Vue.component('set-operator-component', require('./components/SetOperatorComponent.vue').default);
-
 Vue.component('history-stat-chart-component', require('./components/HistoryStatChartComponent.vue').default);
+Vue.component('set-queue-component', require('./components/SetQueueComponent.vue').default);
+Vue.component('set-operator-component', require('./components/SetOperatorComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
