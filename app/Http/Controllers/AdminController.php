@@ -45,7 +45,7 @@ class AdminController extends Controller
         };
 
         $queue = QueueList::create([
-        	'name' => $request['name'],
+        	'name' => ucfirst($request['name']),
         	'fromDate' => $request['fromDate'],
         	'toDate' => $request['toDate'],
         ]);
@@ -120,7 +120,7 @@ class AdminController extends Controller
                         ->withErrors($validation);
         };
 
-        $name = ucfirst($request['sname'])." ".ucfirst($request['fname']);
+        $name = ucfirst(strtolower($request['sname']))." ".ucfirst(strtolower($request['fname']));
         $email = strtolower($request['email']);
         User::create([
             'name' => $name,
