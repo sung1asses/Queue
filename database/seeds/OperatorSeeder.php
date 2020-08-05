@@ -15,7 +15,7 @@ class OperatorSeeder extends Seeder
 
     	\App\User::create([
 	        'name' => 'Suvorov Roman',
-	        'email' => 'suvorov_roman@queue.operator',
+	        'email' => 'operator',
 	        'password' => Illuminate\Support\Facades\Hash::make('operator'),
 	    ])->attachRole($operator_role);
 

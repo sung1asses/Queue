@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
 
         $admin = \App\User::create([
 	        'name' => 'Admin',
-	        'email' => 'admin@admin.admin',
-	        'password' => Illuminate\Support\Facades\Hash::make('password'),
+	        'email' => 'admin',
+	        'password' => Illuminate\Support\Facades\Hash::make('admin'),
 	    ])->attachRole($adminRole);
 
 	    $operatorRole = \HttpOz\Roles\Models\Role::create([
